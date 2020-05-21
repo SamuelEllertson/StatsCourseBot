@@ -4,6 +4,11 @@ from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
 from iohandler import IOHandler
 
+'''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
+responding to messages.
+
+Aside from some error handling and recovery which can be added later, its essentially complete'''
+
 def get_args():
     parser = argparse.ArgumentParser(description='Chatbot that answers questions about CalPoly Stats Courses', formatter_class=Formatter)
     parser.add_argument('-v',            dest="verbose",     action="store_true", help='Toggles verbose output')
