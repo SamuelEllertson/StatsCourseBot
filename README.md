@@ -1,3 +1,5 @@
+
+
 ## Authors: Samuel Ellertson, Noah Stapp, Max Barshay
 
 ### Setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
@@ -9,6 +11,14 @@
 - keep your 'public' methods near the top, seperated from your internal logic methods, so that things remain clear
 - Add docstrings to all your 'public' methods, documenting purpose, param types, and return types
     - type hints on params and return types, for 'public' methods, is prefered
+
+# TODO:
+- Assign questions and create 120 variations total
+- Divide work among us
+    - datastore.py    - SQL stuff
+    - responder.py    - parsing messages and discovering user intent
+    - dataupdater.py  - Scraping and parsing course data
+- Create presentation
 
 # Components:
     
