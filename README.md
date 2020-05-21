@@ -1,7 +1,14 @@
 Authors: Samuel Ellertson, Noah Stapp, Max Barshay
 
+setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
+
 Style guidline:
     4 space indentation
+    function/method names: snake_case
+    please use descriptive, non-shortened variable names, unless their meaning is obvious enough
+    keep your 'public' methods near the top, seperated from your internal logic methods, so that things remain clear
+    add docstrings to all your 'public' methods, documenting purpose, param types, and return types
+        type hints on params, where it makes sense, is prefered
 
 components:
     
@@ -19,7 +26,7 @@ components:
             ircbot
         recieves messages
             provides prompt for terminal use
-            message_Answerer provides responses
+            Responder provides responses
         can send responses
         can ask follow up questions
 
@@ -45,6 +52,7 @@ components:
             class discriptions
             lookups (ie: class name -> terms offered)
             etc
+        defines the Course object
     
     db.json
         database credential and config file, JSON format
@@ -54,3 +62,32 @@ components:
         periodically scrapes calpoly website(s)
         updates database
 
+Commandline argument spec:
+    format: -flag "destination name" purpose
+
+    -v            "verbose"     toggles additional output for debugging purposes
+    --irc         "use_irc"     with this flag set, use irc instead of the terminal
+    --irc-host    "irc_host"    sets which irc host to connect to, defaults to irc.freenode.net
+    --irc-channel "irc_channel" sets irc channel to use, defaults to '#CSC466'
+    --bot-name    "bot_name"    sets the bots name, defaults to 'StatsCourseBot'
+
+
+Course listing terminology:
+    Always use these names as specified to keep things consistent across our code
+
+    Example listing: (slightly modified)
+        STAT 427. Mathematical Statistics.   4 units
+        Prerequisite: STAT 426. Recommended: STAT 302.
+        Continuation of STAT 426. The theory of hypothesis testing and its applications. Power and uniformly most powerful tests. Categorical data and nonparametric methods. Other selected topics. 4 lectures.
+
+    format: term: example portion -> type(extracted information)
+
+        course_id:      STAT 427.                  -> int(427)
+        course_title:   Mathematical Statistics.   -> str(Mathematical Statistics)
+        course_prereqs: STAT 426.                  -> str(STAT 426. Recommended: STAT 302.)  
+        course_units:   4 units                    -> int(4)
+        course_desc:    Continuation ... lectures  -> str(Continuation ... lectures)
+
+Work on a git branch. DO NOT PUSH BROKEN CODE TO MASTER
+
+I highly recommend using pyflakes to inspect your code before commiting, and generally as part of your dev cycle

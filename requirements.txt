@@ -1,0 +1,2 @@
+mysql-connector-python==8.0.20
+irc==18.0.0
