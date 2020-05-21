@@ -1,10 +1,10 @@
 
 
-## Authors: Samuel Ellertson, Noah Stapp, Max Barshay
+## Authors: Samuel Ellertson, Noah Stapp, Max Barshay, Matthew Bennin
 
 ### Setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
 
-# Style guidline:
+# Style guideline:
 - 4 space indentation (not tabs)
 - Function/method names: snake_case
 - Please use descriptive, non-shortened variable names, unless their meaning is obvious enough
@@ -96,5 +96,5 @@ filename: ClassName
         course_desc:    Continuation ... lectures  -> str(Continuation ... lectures)
 
 # Other
-- Work on a git branch. DO NOT PUSH BROKEN CODE TO MASTER
+- Work on a git branch. **DO NOT PUSH BROKEN CODE TO MASTER**
 - I highly recommend using pyflakes to inspect your code before commiting, and generally as part of your dev cycle
