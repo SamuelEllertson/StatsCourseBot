@@ -1,16 +1,16 @@
-Authors: Samuel Ellertson, Noah Stapp, Max Barshay
+## Authors: Samuel Ellertson, Noah Stapp, Max Barshay
 
-setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
+### Setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
 
-Style guidline:
-    4 space indentation
-    function/method names: snake_case
-    please use descriptive, non-shortened variable names, unless their meaning is obvious enough
-    keep your 'public' methods near the top, seperated from your internal logic methods, so that things remain clear
-    add docstrings to all your 'public' methods, documenting purpose, param types, and return types
-        type hints on params, where it makes sense, is prefered
+# Style guidline:
+- 4 space indentation (not tabs)
+- Function/method names: snake_case
+- Please use descriptive, non-shortened variable names, unless their meaning is obvious enough
+- keep your 'public' methods near the top, seperated from your internal logic methods, so that things remain clear
+- Add docstrings to all your 'public' methods, documenting purpose, param types, and return types
+    - type hints on params and return types, for 'public' methods, is prefered
 
-components:
+# Components:
     
     filename: ClassName
 
@@ -62,7 +62,7 @@ components:
         periodically scrapes calpoly website(s)
         updates database
 
-Commandline argument spec:
+# Commandline argument spec:
     format: -flag "destination name" purpose
 
     -v            "verbose"     toggles additional output for debugging purposes
@@ -72,13 +72,14 @@ Commandline argument spec:
     --bot-name    "bot_name"    sets the bots name, defaults to 'StatsCourseBot'
 
 
-Course listing terminology:
+# Course listing terminology:
     Always use these names as specified to keep things consistent across our code
 
     Example listing: (slightly modified)
         STAT 427. Mathematical Statistics.   4 units
         Prerequisite: STAT 426. Recommended: STAT 302.
-        Continuation of STAT 426. The theory of hypothesis testing and its applications. Power and uniformly most powerful tests. Categorical data and nonparametric methods. Other selected topics. 4 lectures.
+        Continuation of STAT 426. The theory of hypothesis testing and its applications. Power and uniformly 
+        most powerful tests. Categorical data and nonparametric methods. Other selected topics. 4 lectures.
 
     format: term: example portion -> type(extracted information)
 
@@ -88,6 +89,6 @@ Course listing terminology:
         course_units:   4 units                    -> int(4)
         course_desc:    Continuation ... lectures  -> str(Continuation ... lectures)
 
-Work on a git branch. DO NOT PUSH BROKEN CODE TO MASTER
-
-I highly recommend using pyflakes to inspect your code before commiting, and generally as part of your dev cycle
+# Other
+- Work on a git branch. DO NOT PUSH BROKEN CODE TO MASTER
+- I highly recommend using pyflakes to inspect your code before commiting, and generally as part of your dev cycle
