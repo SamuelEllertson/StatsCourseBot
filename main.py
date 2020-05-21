@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument('--bot-name',    dest="bot_name",    metavar= "name",    default='StatsCourseBot',   help='Sets bot name')
     return parser.parse_args()
 
-def main(DEBUG):
+def main():
     args = get_args()
 
     datastore = DataStore(args)
@@ -23,5 +23,4 @@ def main(DEBUG):
     iohandler.listen()
 
 if __name__ == '__main__':
-    DEBUG = True
-    main(DEBUG)
+    main()
