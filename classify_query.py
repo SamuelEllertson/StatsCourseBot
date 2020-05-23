@@ -36,43 +36,6 @@ def get_records(records):
     return new_records
 
 
-def extract_variables(query):
-    """Returns the variables contained in a given query and the generalized form of that query."""
-    tokens = nltk.word_tokenize(query)
-    tags = nltk.pos_tag(tokens)
-    general_query = ""
-    terms = ["summer", "spring", "fall", "winter"]
-    vars = []
-    stop_words = set(nltk.corpus.stopwords.words("english"))
-    topic_words = ["on", "about", "covering"]
-    i = 0
-    while i < len(tags):
-        if tags[i][1] == "CD":
-            vars.append(tags[i][0])
-            if "[CLASS]" in general_query:
-                general_query = general_query.replace("[CLASS]", "[CLASSES]")
-            elif "[CLASSES]" not in general_query:
-                general_query += "[CLASS] "
-        elif tags[i][0].lower() in terms:
-            vars.append(tags[i][0].lower())
-            general_query += "[TERM]"
-        elif tags[i][0] in topic_words:
-            j = i + 1
-            while j < len(tags):
-                if tags[j][0] in stop_words:
-                    break
-                vars.append(tags[j][0].lower())
-                j += 1
-            general_query += tags[i][0] + " "
-            general_query += "[TOPIC] "
-            i = j - 1
-        else:
-            general_query += tags[i][0]
-            general_query += " "
-        i += 1
-    return general_query.strip(), vars
-
-
 def main():
     records = []
     variables = []
