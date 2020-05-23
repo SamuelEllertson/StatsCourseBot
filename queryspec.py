@@ -60,7 +60,7 @@ def intent_to_query_pattern(intent):
         Intent.TEACHERS_NEXT_QUARTER           : QueryPattern.ONE_COURSE,
         Intent.NUMBER_OF_SECTIONS_THIS_QUARTER : QueryPattern.ONE_COURSE,
         Intent.NUMBER_OF_SECTIONS_NEXT_QUARTER : QueryPattern.ONE_COURSE,
-        Intent.ENROLLMENT_CAP_NEXT_QUARTER     : QueryPattern.ONE_COURSE
+        Intent.ENROLLMENT_CAP_NEXT_QUARTER     : QueryPattern.ONE_COURSE,
         Intent.IS_COURSE_OFFERED_NEXT_TERM     : QueryPattern.ONE_COURSE,
 
         Intent.IS_COURSE_PREREQ_OF_COURSE      : QueryPattern.TWO_COURSES,
