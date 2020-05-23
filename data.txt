@@ -1,0 +1,39 @@
+B4|What classes can I take after taking [class]?|After taking [class], you can take [class1, class2, …].
+B4|Which classes will taking [class] let me take?|After taking [class], you can take [class1, class2, …].
+B4|What classes require [class]?|[class] is required by [class1, class2, …].
+B4|What classes have [class] as a prerequisite?|[class] is required by [class1, class2, …].
+B4|Which classes are available after enrolling in [class]?|[class] is required by [class1, class2, …].
+B4|Is [class] being offered in [term]?|Yes, [class] is offered in [term].
+B4|Can I take [class] in [term]?|Yes, [class] is offered in [term].
+B4|Will [class] be available in [term]?|Yes, [class] is offered in [term].
+B4|How many quarters is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.
+B4|How often is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.
+B4|Is [class] offered every quarter?|Yes, [class] is offered every quarter.
+B4|Are [class1, class2…] all offered in the same term?|Yes, [class1, class2, ...] are offered together.
+B4|Can I take [class1, class2..] during the same quarter?|Yes, [class1, class2, ...] are offered together.
+B4|Are [class1, class2…] all offered in [term]?|Yes, [class1, class2, ...] are offered together.
+B4|Is it possible to take [class1, class2…] together in [term]?|Yes, [class1, class2, ...] are offered together.
+B4|Does [class] involve coding?|Yes, [class] involves coding.
+B4|Is there programming in [class]?|Yes, [class] involves coding.
+B4|Do I have to code in [class]?|Yes, [class] involves coding.
+B4|Is there software used in [class]?|Yes, [class] involves coding.
+B4|Is [class] offered next quarter?|Yes, [class] is offered next quarter.
+B4|Can I take [class] next quarter?|Yes, [class] is offered next quarter.
+B4|Who is teaching [class] this quarter?|[professor] is teaching [class] this quarter. OR No one is teaching [class] this quarter.
+B4|Who is teaching [class] next quarter?|[professor] is teaching [class] next quarter. OR No one is teaching [class] next quarter.
+B4|How many sections of [class] are offered this quarter?|There are [sections] sections of [class] offered this quarter.
+B4|Are there multiple sections of [class] this quarter?|Yes, there are multiple sections of [class] this quarter.
+B4|Are there several sections of [class] next quarter?|Yes, there are multiple sections of [class] next quarter.
+B4|How many sections of [class] are offered next quarter?|There are [sections] sections of [class] offered next quarter.
+B4|How big is [class] next quarter?|[cap] people can take [class] next quarter.
+B4|How many people can take [class] next quarter?|[cap] people can take [class] next quarter.
+B4|What is the enrollment cap for [class] next quarter?|[cap] people can take [class] next quarter.
+B4|What capacity does [class] have next quarter?|[cap] people can take [class] next quarter.
+B4|What level is [class]?|[class] is a [level] class.
+B4|Is [class] a [level] class?|[class] is a [level] class.
+B4|What terms is [class] being offered in?|[class] is being offered in [term1, term2, …].
+B4|During which quarters is [class] usually offered?|[class] is usually offered in [term1, term2, …].
+B4|When is [class] being offered?|[class] is being offered in [term1, term2, …].
+B4|When is [class] available?|[class] is available in [term1, term2, …].
+B4|When can I take [class]?|You can take [class] in [term1, term2, …].
+B4|Is there a class about [topic]?|Yes, [class] is about [topic].
