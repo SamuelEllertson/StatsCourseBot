@@ -2,8 +2,10 @@
 import json
 from dataclasses import dataclass, field
 
-import mysql.connector
-from mysql.connector import Error
+# import mysql.connector
+# from mysql.connector import Error
+import pymysql.cursors
+import pymysql.connections
 
 '''Provides high level access methods to data stored in the database
 
@@ -54,8 +56,10 @@ class DataStore():
 
         with open("db_dev.json" if args.dev_mode else "db.json") as config_file:
             config = json.load(config_file)
+            print(config)
 
-        self.connection = None #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
+        self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
+        #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
 
     ### 'public' methods up here
 
@@ -82,3 +86,11 @@ class DataStore():
         return Course(1, "fake course", "no prereqs", "1-2", "this is a fake course description", False, True, set('fall'))
 
     ### Helper methods down here
+
+
+    def test_db(self) -> None:
+        cursor = self.connection.cursor()
+        sql = "SELECT `*` FROM `Cities`"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        print(result)
