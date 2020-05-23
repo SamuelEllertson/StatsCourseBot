@@ -2,7 +2,7 @@
 """This class is responsible for dealing with the content of a users message and generating responses."""
 
 from model import Model
-from queryspec import Intent, QueryPattern, intent_to_query_pattern
+from queryspec import Intent
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
