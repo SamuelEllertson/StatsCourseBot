@@ -37,3 +37,26 @@ B4|When is [class] being offered?|[class] is being offered in [term1, term2, …
 B4|When is [class] available?|[class] is available in [term1, term2, …].
 B4|When can I take [class]?|You can take [class] in [term1, term2, …].
 B4|Is there a class about [topic]?|Yes, [class] is about [topic].
+B4|What is [class] about?|[class] is about [description].
+B4|What topics are covered in [class]?|The main topics covered in [class] are [topics].
+B4|What do we learn in [class]?|You will learn [topics].
+B4|What types of things will I study in [class]?|You will study [topics].
+B4|What are the learning objectives of [class]?|The learning objectives of this class are [topics].
+B4|Is there a class about [topic]?|Yes/No
+B4|Are there any classes on [topic]?|Yes/No
+B4|Does the statistics department offer any classes on [topic]?|Yes/No
+B4|Can I take a class on [topic]?|Yes/No
+B4|Can I learn about [topic]?|Yes/No
+B4|Am I able to learn about [topic] at Cal Poly?|Yes/No
+B4|What term(s) is [class] typically offered?|[class] is typically offered [term(s)].
+B4|Which quarter(s) is [class] typically offered?|[class] is typically taught [term(s)].
+B4|What quarter(s) is [class] usually taught?|[class] is typically taught [term(s)].
+B4|Which term(s) is [class] usually taught?|[class] is typically taught [term(s)].
+B4|When is [class] being taught at Cal Poly?|[class] is being taught [term(s)].
+B4|When does the statistics department offer [class]?|The statistics department offers [class] during [term(s)].
+B4|How many units is [class]?|[class] is [units] units.
+B4|How many hours a week does [class] meet?|[class] meets for [units] hours a week.
+B4|How often does [class] meet?|[class] meets either [units] or [units]/2 times a week.
+B4|How many hours do I have to go to [class] per week?|This class meets for [units] hours per week.
+B4|How many units does [class] count for?|This class counts for [units] units.
+B4|What number of units does [class] count for?|This class counts for [units] units.
