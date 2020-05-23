@@ -47,8 +47,17 @@ filename: ClassName
 
 - responder.py: Responder
     - recieves raw text queries from IOHandler
-    - generates response text to send back
+    - generates response based on Intent returned from Model
     - can ask IOHandler additional questions to help narrow down options
+
+- model.py: Model
+    - determines a messages intent based on its raw content
+    - has access to the DataStore
+
+- queryspec.py: Intent(Enum), QueryPattern(Enum)
+    - canonical list of all the defined intents
+    - also maps an intent to its corresponding query pattern
+        - a query pattern is the format of variables in the question
 
 - datastore.py: DataStore
     - handles interaction with database

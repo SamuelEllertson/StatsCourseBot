@@ -1,12 +1,18 @@
 
 """This class is responsible for dealing with the content of a users message and generating responses."""
 
+from model import Model
+from queryspec import Intent, QueryPattern, intent_to_query_pattern
+
+'''Takes in a message from the user, and uses its model to create a response message'''
+
 class Responder():
 
     def __init__(self, args, datastore, iohandler):
         self.args = args
         self.datastore = datastore
         self.iohandler = iohandler
+        self.model = Model(args, datastore)
 
     def get_response(self, message: str) -> str:
         '''The primary function of the Responder. Takes in a raw message from the user
