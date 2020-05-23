@@ -41,11 +41,15 @@ class DataStore():
     def __init__(self, args):
         self.args = args
 
-        with open("db.json") as config_file:
+        with open("db_dev.json" if args.dev_mode else "db.json") as config_file:
             config = json.load(config_file)
 
         self.connection = None #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
 
+
+    def clear(self) -> None:
+        '''Clears the database of all entries'''
+        pass
 
     ### 'public' methods up here
 

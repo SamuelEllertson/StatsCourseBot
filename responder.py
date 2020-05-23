@@ -12,7 +12,7 @@ class Responder():
         self.args = args
         self.datastore = datastore
         self.iohandler = iohandler
-        self.model = Model(args, datastore)
+        self.model = Model(args, datastore, iohandler)
 
     def get_response(self, message: str) -> str:
         '''The primary function of the Responder. Takes in a raw message from the user

@@ -12,6 +12,7 @@ Aside from some error handling and recovery which can be added later, its essent
 def get_args():
     parser = argparse.ArgumentParser(description='Chatbot that answers questions about CalPoly Stats Courses', formatter_class=Formatter)
     parser.add_argument('-v',            dest="verbose",     action="store_true", help='Toggles verbose output')
+    parser.add_argument('--dev',         dest="dev_mode",    action="store_true", help='Turns on development mode')
     parser.add_argument('--irc',         dest="use_irc",     action="store_true", help='Use irc instead of the terminal')
     parser.add_argument('--irc-host',    dest="irc_host",    metavar= "host",    default='irc.freenode.net', help='Sets irc host')
     parser.add_argument('--irc-channel', dest="irc_channel", metavar= "channel", default='#CSC466',          help='sets irc channel')

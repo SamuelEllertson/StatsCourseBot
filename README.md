@@ -69,8 +69,11 @@ filename: ClassName
     - defines the Course object
 
 - db.json
-    - database credential and config file, JSON format
+    - database credential and config file for the production database (hosted on frank)
     - a db(EXAMPLE).json file is provided, the real db.json is excluded from git to avoid posting the password publically.
+
+- db_dev.json
+    - database credential and config file for local development database.
 
 - dataupdater.py: implement as you desire
     - independant component
@@ -81,6 +84,7 @@ filename: ClassName
     format: -flag "destination name" purpose
 
     -v            "verbose"     toggles additional output for debugging purposes
+    --dev         "dev_mode"    turns on development mode, which uses a local database as defined in db_dev.json
     --irc         "use_irc"     with this flag set, use irc instead of the terminal
     --irc-host    "irc_host"    sets which irc host to connect to, defaults to irc.freenode.net
     --irc-channel "irc_channel" sets irc channel to use, defaults to '#CSC466'
@@ -90,19 +94,23 @@ filename: ClassName
 # Course listing terminology:
     Always use these names as specified to keep things consistent across our code
 
-    Example listing: (slightly modified)
-        STAT 427. Mathematical Statistics.   4 units
+    Example listing: (modified)
+        STAT 427. Mathematical Statistics.   1-4 units
         Prerequisite: STAT 426. Recommended: STAT 302.
         Continuation of STAT 426. The theory of hypothesis testing and its applications. Power and uniformly 
         most powerful tests. Categorical data and nonparametric methods. Other selected topics. 4 lectures.
+        Substantial use of statistical software
 
-    format: term: example portion -> type(extracted information)
+    format: term: relevant portion -> type(extracted information)
 
-        course_id:      STAT 427.                  -> int(427)
-        course_title:   Mathematical Statistics.   -> str(Mathematical Statistics)
-        course_prereqs: STAT 426.                  -> str(STAT 426. Recommended: STAT 302.)  
-        course_units:   4 units                    -> int(4)
-        course_desc:    Continuation ... lectures  -> str(Continuation ... lectures)
+        id:              STAT 427.                  -> int(427)
+        title:           Mathematical Statistics.   -> str(Mathematical Statistics)
+        prereqs:         STAT 426.                  -> str(STAT 426. Recommended: STAT 302.)  
+        units:           1-4 units                  -> str(1-4)
+        about:           Continuation ... lectures  -> str(Continuation ... lectures)
+        coding_involved  use of ... software        -> bool(true)
+        elective                                    -> bool(false)
+        terms                                       -> set("fall", "winter", "spring", "summer")
 
 # Other
 - Work on a git branch. **DO NOT PUSH BROKEN CODE TO MASTER**
