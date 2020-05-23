@@ -2,6 +2,11 @@
 from responder import Responder
 from ircbot import IRCBot
 
+'''This class handles all IO interaction with the user, it handles terminal/irc transparently. Use
+its get_message, send_message, and ask_question methods for all user interaction
+
+This class is basically already complete'''
+
 class IOHandler():
     
     def __init__(self, args, datastore):
