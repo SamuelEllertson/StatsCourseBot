@@ -36,11 +36,51 @@ def get_records(records):
     return new_records
 
 
+def extract_variables(query):
+    """Returns the variables contained in a given query and the generalized form of that query."""
+    tokens = nltk.word_tokenize(query)
+    tags = nltk.pos_tag(tokens)
+    general_query = ""
+    terms = ["summer", "spring", "fall", "winter"]
+    vars = []
+    stop_words = set(nltk.corpus.stopwords.words("english"))
+    topic_words = ["on", "about", "covering"]
+    i = 0
+    while i < len(tags):
+        if tags[i][1] == "CD":
+            vars.append(tags[i][0])
+            if "[CLASS]" in general_query:
+                general_query = general_query.replace("[CLASS]", "[CLASSES]")
+            elif "[CLASSES]" not in general_query:
+                general_query += "[CLASS] "
+        elif tags[i][0].lower() in terms:
+            vars.append(tags[i][0].lower())
+            general_query += "[TERM]"
+        elif tags[i][0] in topic_words:
+            j = i + 1
+            while j < len(tags):
+                if tags[j][0] in stop_words:
+                    break
+                vars.append(tags[j][0].lower())
+                j += 1
+            general_query += tags[i][0] + " "
+            general_query += "[TOPIC] "
+            i = j - 1
+        else:
+            general_query += tags[i][0]
+            general_query += " "
+        i += 1
+    return general_query.strip(), vars
+
+
 def main():
     records = []
     variables = []
     corpus = {}
     stop_words = set(nltk.corpus.stopwords.words("english"))
+    nltk.download("averaged_perceptron_tagger")
+    nltk.download("tagsets")
+    nltk.download("punkt")
     punc = """!()-{};:'"\,<>./?@#$%^&*_~"""
     with open("data.txt") as fd:
         lines = fd.readlines()
@@ -58,46 +98,41 @@ def main():
     with open("queries.txt") as fd:
         lines = fd.readlines()
         lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
-        queries = [x.lower().split(" ") for x in lines]
+        queries = [x.replace("STAT", "") for x in lines]
+
         for query in queries:
-            variables.append(
-                [
-                    word
-                    for word in query
-                    if word not in corpus and word not in stop_words
-                ]
-            )
+            print(extract_variables(query))
 
-    # # Test-train split, 80% train 20% test
-    records = get_records(records)
-    X_train, X_test, y_train, y_test = train_test_split(
-        [r.query for r in records],
-        [r.answer for r in records],
-        train_size=0.6,
-        stratify=[r.answer for r in records],
-    )
+    # # # Test-train split, 80% train 20% test
+    # records = get_records(records)
+    # X_train, X_test, y_train, y_test = train_test_split(
+    #     [r.query for r in records],
+    #     [r.answer for r in records],
+    #     train_size=0.6,
+    #     stratify=[r.answer for r in records],
+    # )
 
-    print(y_train)
-    print(y_test)
-    # Use TF-IDF for features
-    tfid = TfidfVectorizer(stop_words=stop_words)
-    tfid.fit([r.query for r in records])
-    X_train = tfid.transform(X_train)
-    X_test = tfid.transform(X_test)
+    # print(y_train)
+    # print(y_test)
+    # # Use TF-IDF for features
+    # tfid = TfidfVectorizer(stop_words=stop_words)
+    # tfid.fit([r.query for r in records])
+    # X_train = tfid.transform(X_train)
+    # X_test = tfid.transform(X_test)
 
-    model = KNeighborsClassifier(n_neighbors=4)
+    # model = KNeighborsClassifier(n_neighbors=4)
 
-    model.fit(X_train, y_train)
+    # model.fit(X_train, y_train)
 
-    y_pred = model.predict(X_test)
+    # y_pred = model.predict(X_test)
 
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-    print(
-        "Average Precision:",
-        metrics.precision_score(y_test, y_pred, average="weighted"),
-    )
-    print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
-    print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
+    # print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    # print(
+    #     "Average Precision:",
+    #     metrics.precision_score(y_test, y_pred, average="weighted"),
+    # )
+    # print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
+    # print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
 
 
 if __name__ == "__main__":
