@@ -44,7 +44,7 @@ def main():
     nltk.download("averaged_perceptron_tagger")
     nltk.download("tagsets")
     nltk.download("punkt")
-    punc = """!()-{};:'"\,<>./?@#$%^&*_~"""
+    punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
     with open("data.txt") as fd:
         lines = fd.readlines()
         lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
