@@ -1,6 +1,6 @@
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import mysql.connector
 from mysql.connector import Error
@@ -30,11 +30,22 @@ intended for use elsewhere in the code
 
 @dataclass
 class Course:
-    course_id:      int 
-    course_title:   str
-    course_prereqs: str
-    course_units:   int
-    course_desc:    str
+    id              : int
+    title           : str
+    prereqs         : str
+    units           : str
+    about           : str
+    coding_involved : bool = False
+    elective        : bool = False
+    terms           : set  = field(default_factory=set)
+
+@dataclass
+class Section:
+    course_id      : int
+    section_id     : int
+    times_offered  : str
+    enrollment_cap : int
+    teacher        : str
 
 class DataStore():
 
@@ -46,12 +57,19 @@ class DataStore():
 
         self.connection = None #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
 
+    ### 'public' methods up here
 
     def clear(self) -> None:
         '''Clears the database of all entries'''
         pass
 
-    ### 'public' methods up here
+    def insert_course(self, course: Course) -> None:
+        '''inserts course information into the database'''
+        pass
+
+    def insert_section(self, section: Section) -> None:
+        '''inserts section into database'''
+        pass
 
     def get_course_ids(self) -> set:
         '''returns a set of all course ids'''
@@ -61,6 +79,6 @@ class DataStore():
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
 
-        return Course(1, "fake course", "no prereqs", "0 units", "this is a fake course description")
+        return Course(1, "fake course", "no prereqs", "1-2", "this is a fake course description", False, True, set('fall'))
 
     ### Helper methods down here

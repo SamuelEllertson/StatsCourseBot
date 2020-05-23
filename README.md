@@ -111,6 +111,7 @@ filename: ClassName
         coding_involved  use of ... software        -> bool(true)
         elective                                    -> bool(false)
         terms                                       -> set("fall", "winter", "spring", "summer")
+        times_offered                               -> str("mwf 10:10am to 11:00am") //This is acceptable for our purposes
 
 # Other
 - Work on a git branch. **DO NOT PUSH BROKEN CODE TO MASTER**

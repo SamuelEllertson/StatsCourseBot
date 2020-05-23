@@ -15,6 +15,7 @@ create table course (
 create table sections (
     course_id int not null,
     section_id int not null,
+    times_offered varchar(50) not null,
     enrollment_cap int not null,
     teacher varchar(100) not null,
     PRIMARY KEY (course_id, section_id),
