@@ -16,7 +16,7 @@ def main():
     datastore = DataStore(args)
     for i in range(len(courses)):
         print(courses[i].as_list())
-        datastore.insert_course(courses[i])
+        # datastore.insert_course(courses[i])
         
         #print(courses[i])
 
@@ -49,7 +49,7 @@ def scrape_courses():
         )
         id_and_title = id_and_title.split(".")
         id = id_and_title[0].split("\xa0")[1]
-        title = id_and_title[1]
+        title = id_and_title[1].strip()
         paragraphs = course.findAll("p")
         prereqs = ""
         reccomended = ""
@@ -75,7 +75,7 @@ def scrape_courses():
                 reccomended = " ".join(prereqs[1:])
 
         courses.append(
-            Course(int(id), title, prereqs, units, desc, coding_involved, False, {})
+            Course(int(id), prereqs, units, title, desc, coding_involved, False, {})
         )
     # print(courses)
 
