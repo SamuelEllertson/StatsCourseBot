@@ -36,13 +36,13 @@ class Model:
             # Term name found
             elif tags[i][0].lower() in terms:
                 vars.append(tags[i][0].lower())
-                general_query += "[TERM]"
+                general_query += "[TERM]" #why no space here?
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words:
                 j = i + 1
                 # Get the entire topic
                 while j < len(tags):
-                    if tags[j][0] in stop_words:
+                    if tags[j][0] in stop_words: # you think that this means the intent is finished?
                         break
                     vars.append(tags[j][0].lower())
                     j += 1
