@@ -65,15 +65,29 @@ class DataStore():
 
     def clear(self) -> None:
         '''Clears the database of all entries'''
+        # cursor = self.connection.cursor()
         pass
+
 
     def insert_course(self, course: Course) -> None:
         '''inserts course information into the database'''
-        pass
+        cursor = self.connection.cursor()
+        sql = """
+        INSERT INTO course (id, prereqs, units, title, about, coding_involved, elective, terms)
+            VALUES (course.id, course.prereqs, course.units, course.title, course.about, course.coding_involved
+            course.elective, course.terms);
+        """
+        cursor.execute(sql)
+
 
     def insert_section(self, section: Section) -> None:
         '''inserts section into database'''
-        pass
+        cursor = self.connection.cursor()
+        sql = """
+        INSERT INTO sections (course_id, section_id, times_offered, enrollment_cap, teacher)
+            VALUES (section.course_id, section.section_id, section.times_offered, section.enrollment_cap, section.teacher);
+        """
+        cursor.execute(sql)
 
     def get_course_ids(self) -> set:
         '''returns a set of all course ids'''
