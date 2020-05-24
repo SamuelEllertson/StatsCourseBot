@@ -2,6 +2,8 @@
 import os, sys, random, requests, re
 from bs4 import BeautifulSoup
 from datastore import Course
+from main import get_args
+from datastore import DataStore
 
 
 """This file will be run entirely independantly of the rest of the code. Its job is to scrape the catalog
@@ -10,7 +12,15 @@ and any other relevant website, collection all the stats course data, and popula
 
 def main():
     courses = scrape_courses()
-    print(courses)
+    args = get_args()
+    datastore = DataStore(args)
+    for i in range(len(courses)):
+        print(courses[i].as_list())
+        datastore.insert_course(courses[i])
+        
+        #print(courses[i])
+
+    #print(courses)
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""

@@ -50,7 +50,7 @@ class Course:
             self.about, 
             self.coding_involved,
             self.elective, 
-            ','.join(self.terms)
+            ",".join(self.terms)
         ]
 
     def from_db(db_result):
