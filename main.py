@@ -33,12 +33,24 @@ def main():
 def test():
     args = get_args()
     datastore = DataStore(args)
-    # datastore.test_db()
+    #datastore.test_db()
     course = Course(1, "fun", "class", "good", "stuff", 0, 1, "winter")
-    section = Section(1,2, "hi", 3, "classfun")
-    
     datastore.insert_course(course)
+    course = Course(12, "fun", "class", "good", "stuff", 0, 1, "winter")
+    datastore.insert_course(course)
+    course = Course(112, "fun", "class", "good", "stuff", 0, 1, "winter")
+    datastore.insert_course(course)
+    course = Course(11231, "fun", "class", "good", "stuff", 0, 1, "winter")
+    datastore.insert_course(course)
+    course = Course(1231, "fun", "class", "good", "stuff", 0, 1, "winter")
+    datastore.insert_course(course)
+    course = Course(1231122, "fun", "class", "good", "stuff", 0, 1, "winter")
+    section = Section(1,2, "hi", 3, "classfun")
+
+    
     datastore.insert_section(section)
+    print(datastore.get_course_ids())
+    print(datastore.get_course_from_id(1))
     
 if __name__ == '__main__':
     #main()
