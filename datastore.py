@@ -41,6 +41,31 @@ class Course:
     elective        : bool = False
     terms           : set  = field(default_factory=set)
 
+    def as_list(self):
+        return [
+            self.id, 
+            self.prereqs, 
+            self.units, 
+            self.title, 
+            self.about, 
+            self.coding_involved,
+            self.elective, 
+            ','.join(self.terms)
+        ]
+
+    def from_db(db_result):
+        '''Constructs a new course from a database result object, doing the necessary transformations'''
+        args = list(db_result)
+
+        #convert 0,1 to actual boolean
+        args[5] = bool(args[5])
+        args[6] = bool(args[6])
+
+        #convert comma seperated string to real set
+        args[7] = set(args[7].split(","))
+
+        return Course(*args)
+
 @dataclass
 class Section:
     course_id      : int
@@ -48,6 +73,18 @@ class Section:
     times_offered  : str
     enrollment_cap : int
     teacher        : str
+
+    def as_list(self):
+        return [
+            self.course_id,
+            self.section_id,
+            self.times_offered,
+            self.enrollment_cap,
+            self.teacher
+        ]
+
+    def from_db(db_result):
+        return Section(*db_result)
 
 class DataStore():
 
@@ -59,64 +96,62 @@ class DataStore():
 
         self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
 
-    ### 'public' methods up here
-
     def clear(self) -> None:
         '''Clears the database of all entries'''
-        with self.connection.cursor() as cursor:
-            sql1 = "DELETE FROM sections;"
-            sql2 = "DELETE FROM course;" 
-            cursor.execute(sql1);
-            cursor.execute(sql2);
-        self.connection.commit()
 
+        self.execute_query("DELETE FROM sections;")
+        self.execute_query("DELETE FROM course;")
 
     def insert_course(self, course: Course) -> None:
         '''inserts course information into the database'''
-        with self.connection.cursor() as cursor:
-            sql = """
-            INSERT IGNORE INTO course (id, prereqs, units, title, about, coding_involved, elective, terms)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-            """
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                cursor.execute(sql, (course.id, course.prereqs, course.units, course.title, course.about, course.coding_involved,
-                    course.elective, course.terms))
-        self.connection.commit()
+
+        query = "INSERT IGNORE INTO course VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
+
+        self.execute_query(query, course.as_list())
 
     def insert_section(self, section: Section) -> None:
         '''inserts section into database'''
-        with self.connection.cursor() as cursor:
-            sql = """
-            INSERT IGNORE INTO sections (course_id, section_id, times_offered, enrollment_cap, teacher)
-                VALUES (%s, %s, %s, %s, %s);
-            """
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                cursor.execute(sql, (section.course_id, section.section_id, section.times_offered, section.enrollment_cap,
-                     section.teacher))
-        self.connection.commit()
+        query = "INSERT IGNORE INTO sections VALUES (%s, %s, %s, %s, %s);"
 
+        self.execute_query(query, section.as_list())
 
     def get_course_ids(self) -> set:
         '''returns a set of all course ids'''
-        with self.connection.cursor() as cursor:
-            sql = """
-            SELECT id FROM course
-            """
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            return_set = set([cid[0] for cid in result])
-            return return_set
+        query = "SELECT id FROM course"
+
+        results = self.execute_query(query)
+
+        return set(result[0] for result in results)
     
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
-        with self.connection.cursor() as cursor:
-            sql = """
-            SELECT * FROM course WHERE id = %s
-            """
-            cursor.execute(sql, id)
-            result = cursor.fetchone()
-            return Course(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7])
+        sql = "SELECT * FROM course WHERE id = %s"
+
+        result = self.execute_query(sql, id, one_result=True)
+
+        if result is None:
+            return None
+
+        return Course.from_db(result)
 
     ### Helper methods down here
+
+    def execute_query(self, query: str, arguments: list = None, one_result : bool = False) -> None:
+        with self.connection.cursor() as cursor:
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+
+                if arguments is None:
+                    cursor.execute(query)
+                else:
+                    cursor.execute(query, arguments)
+
+                if one_result:
+                    result = cursor.fetchone()
+                else:
+                    result = cursor.fetchall() 
+
+        self.connection.commit()
+
+        return result
