@@ -12,6 +12,7 @@ and any other relevant website, collection all the stats course data, and popula
 
 def main():
     courses = scrape_courses()
+    sections = scrape_sections()
     args = get_args()
     datastore = DataStore(args)
     datastore.clear()
@@ -20,6 +21,8 @@ def main():
         datastore.insert_course(courses[i])
         
         print(courses[i])
+    for i in range(len(sections)):
+        datastore.insert_section(sections[i])
 
     print(courses)
     sections = scrape_sections()
