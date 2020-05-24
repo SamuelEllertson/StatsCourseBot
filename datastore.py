@@ -44,7 +44,7 @@ class Course:
     def as_list(self):
         return [
             self.id, 
-            self.prereqs, 
+            "".join(self.prereqs), 
             self.units, 
             self.title, 
             self.about, 
