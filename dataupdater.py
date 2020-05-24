@@ -16,11 +16,12 @@ def main():
     datastore = DataStore(args)
     for i in range(len(courses)):
         print(courses[i].as_list())
-        # datastore.insert_course(courses[i])
+        datastore.insert_course(courses[i])
         
         #print(courses[i])
 
     #print(courses)
+    # sections = scrape_sections()
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""
@@ -55,7 +56,7 @@ def scrape_courses():
         reccomended = ""
         if len(paragraphs) == 5:
             ge_areas = re.findall(r"Area (\w+)", paragraphs[1].text)
-        prereqs = (
+        prereqs_raw = (
             course.find("div", {"class": "noindent courseextendedwrap"})
             .get_text()
             .split()
@@ -68,16 +69,15 @@ def scrape_courses():
         coding_involved = False
         if "software" in desc:
             coding_involved = True
-        for word in prereqs:
-            if word == "Prerequisite:" or word == "Corequisite:":
-                prereqs = " ".join(prereqs[1:])
-            if word == "Reccomended:":
-                reccomended = " ".join(prereqs[1:])
+        for i in range(len(prereqs_raw)):
+            if prereqs_raw[i].endswith("Prerequisite:") or prereqs_raw[i].endswith("Corequisite:"):
+                prereqs = " ".join(prereqs_raw[i + 1:])
+            if prereqs_raw[i].endswith("Reccomended:"):
+                reccomended = " ".join(prereqs_raw[i:])
 
         courses.append(
             Course(int(id), prereqs, units, title, desc, coding_involved, False, {})
         )
-    # print(courses)
 
     url = "https://tto.calpoly.edu/csv-to-html-table-master/tto/Course_Term_Typically_Offered.csv"
 
@@ -118,6 +118,26 @@ def scrape_courses():
             course.elective = True
 
     return courses
+
+def scrape_sections():
+    """Scrapes https://schedules.calpoly.edu/subject_STAT_next.htm for next section data."""
+
+    sections = []
+
+    # obtain the content of the URL in HTML
+    url = "https://schedules.calpoly.edu/subject_STAT_next.htm"
+    myRequest = requests.get(url)
+
+    # Create a soup object that parses the HTML
+    soup = BeautifulSoup(myRequest.text, "html.parser")
+
+    # step through the tag hierarchy
+    table = soup.find("table", attrs={"id": "listing"}).find("tbody")
+    # for row in table:
+        # print(row)
+
+    return sections
+
 
 
 if __name__ == "__main__":
