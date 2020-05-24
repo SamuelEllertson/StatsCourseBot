@@ -1,3 +1,4 @@
+
 import os, sys, random, requests, re
 from bs4 import BeautifulSoup
 from datastore import Course
@@ -111,3 +112,4 @@ def scrape_courses():
 
 if __name__ == "__main__":
     main()
+
