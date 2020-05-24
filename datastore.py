@@ -2,8 +2,10 @@
 import json
 from dataclasses import dataclass, field
 
-import mysql.connector
-from mysql.connector import Error
+# import mysql.connector
+# from mysql.connector import Error
+import pymysql.cursors
+import pymysql.connections
 
 '''Provides high level access methods to data stored in the database
 
@@ -54,22 +56,40 @@ class DataStore():
 
         with open("db_dev.json" if args.dev_mode else "db.json") as config_file:
             config = json.load(config_file)
+            print(config)
 
-        self.connection = None #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
+        self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
+        #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
 
     ### 'public' methods up here
 
     def clear(self) -> None:
         '''Clears the database of all entries'''
+        # cursor = self.connection.cursor()
         pass
+
 
     def insert_course(self, course: Course) -> None:
         '''inserts course information into the database'''
-        pass
+        cursor = self.connection.cursor()
+        sql = """
+        INSERT INTO course (id, prereqs, units, title, about, coding_involved, elective, terms)
+            VALUES (course.id, course.prereqs, course.units, course.title, course.about, course.coding_involved
+            course.elective, course.terms);
+        """
+        cursor.execute(sql)
+
 
     def insert_section(self, section: Section) -> None:
         '''inserts section into database'''
-        pass
+        cursor = self.connection.cursor()
+        sql = """
+        INSERT INTO sections (course_id, section_id, times_offered, enrollment_cap, teacher)
+            VALUES (section.course_id, section.section_id, section.times_offered, section.enrollment_cap,
+             section.teacher);
+        """
+        cursor.execute(sql)
+
 
     def get_course_ids(self) -> set:
         '''returns a set of all course ids'''
@@ -82,3 +102,11 @@ class DataStore():
         return Course(1, "fake course", "no prereqs", "1-2", "this is a fake course description", False, True, set('fall'))
 
     ### Helper methods down here
+
+
+    def test_db(self) -> None:
+        cursor = self.connection.cursor()
+        sql = "SELECT `*` FROM `Cities`"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        print(result)

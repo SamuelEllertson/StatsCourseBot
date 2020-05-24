@@ -1,5 +1,7 @@
 #your files here
 db.json
+db_dev.json
+requirements.txt
 
 
 ### Python ###
