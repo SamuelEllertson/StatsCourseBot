@@ -2,13 +2,10 @@
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
-from datastore import Course
-from datastore import Section
-# from iohandler import IOHandler
+from iohandler import IOHandler
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
-
 Aside from some error handling and recovery which can be added later, its essentially complete'''
 
 def get_args():
@@ -24,37 +21,11 @@ def get_args():
 
 def main():
     args = get_args()
+
     datastore = DataStore(args)
     iohandler = IOHandler(args, datastore)
+
     iohandler.listen()
 
-
-
-def test():
-    args = get_args()
-    datastore = DataStore(args)
-    #datastore.test_db()
-    course = Course(1, "fun", "class", "good", "stuff", 0, 1, "winter")
-    datastore.insert_course(course)
-    course = Course(12, "fun", "class", "good", "stuff", 0, 1, "winter")
-    datastore.insert_course(course)
-    course = Course(112, "fun", "class", "good", "stuff", 0, 1, "winter")
-    datastore.insert_course(course)
-    course = Course(11231, "fun", "class", "good", "stuff", 0, 1, "winter")
-    datastore.insert_course(course)
-    course = Course(1231, "fun", "class", "good", "stuff", 0, 1, "winter")
-    datastore.insert_course(course)
-    course = Course(1231122, "fun", "class", "good", "stuff", 0, 1, "winter")
-    section = Section(1,2, "hi", 3, "classfun")
-
-    
-    datastore.insert_section(section)
-    print(datastore.get_course_ids())
-    print(datastore.get_course_from_id(1))
-    datastore.clear()
-    
 if __name__ == '__main__':
-    #main()
-    test()
-
-    
+    main()
