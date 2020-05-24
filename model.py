@@ -21,8 +21,6 @@ class Model:
         nltk.download("wordnet")
         self.feature_vector = {}
 
-        # -> Tuple[str, typing.List[str]]:
-
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from that query, then generalizes the query.
             Returns the list of variables and the generalized form of that query."""

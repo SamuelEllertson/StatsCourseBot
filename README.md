@@ -1,6 +1,6 @@
 
 
-## Authors: Samuel Ellertson, Noah Stapp, Max Barshay, Matthew Bennin
+## Authors: Samuel Ellertson, Noah Stapp, Max Barshay
 
 ### Setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
 
@@ -84,6 +84,7 @@ filename: ClassName
     format: -flag "destination name" purpose
 
     -v            "verbose"     toggles additional output for debugging purposes
+    --scrape      "scrape"      Updates the database instead of running the chatbot
     --dev         "dev_mode"    turns on development mode, which uses a local database as defined in db_dev.json
     --irc         "use_irc"     with this flag set, use irc instead of the terminal
     --irc-host    "irc_host"    sets which irc host to connect to, defaults to irc.freenode.net
