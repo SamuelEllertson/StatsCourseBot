@@ -123,12 +123,3 @@ class DataStore():
             return Course(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7])
 
     ### Helper methods down here
-
-
-    def test_db(self) -> None:
-        """Purely for testing purposes"""
-        cursor = self.connection.cursor()
-        sql = "SELECT `*` FROM `Cities`"
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        print(result)
