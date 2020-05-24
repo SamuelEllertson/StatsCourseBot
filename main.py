@@ -51,6 +51,7 @@ def test():
     datastore.insert_section(section)
     print(datastore.get_course_ids())
     print(datastore.get_course_from_id(1))
+    datastore.clear()
     
 if __name__ == '__main__':
     #main()
