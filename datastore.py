@@ -67,8 +67,8 @@ class DataStore():
     def clear(self) -> None:
         '''Clears the database of all entries'''
         with self.connection.cursor() as cursor:
-            sql1 = "DELETE FROM course;"
-            sql2 = "DELETE FROM sections;"
+            sql1 = "DELETE FROM sections;"
+            sql2 = "DELETE FROM course;" 
             cursor.execute(sql1);
             cursor.execute(sql2);
         self.connection.commit()
