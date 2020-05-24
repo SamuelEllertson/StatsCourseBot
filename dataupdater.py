@@ -16,7 +16,7 @@ def main():
     datastore = DataStore(args)
     datastore.clear()
     for i in range(len(courses)):
-        print(courses[i].as_list())
+        #print(courses[i].as_list())
         datastore.insert_course(courses[i])
         
         #print(courses[i])
