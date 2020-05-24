@@ -1,7 +1,7 @@
 
 import os, sys, random, requests, re
 from bs4 import BeautifulSoup
-from datastore import Course
+from datastore import Course, Section
 from main import get_args
 from datastore import DataStore
 
@@ -19,10 +19,12 @@ def main():
         print(courses[i].as_list())
         datastore.insert_course(courses[i])
         
-        #print(courses[i])
+        print(courses[i])
 
-    #print(courses)
-    # sections = scrape_sections()
+    print(courses)
+    sections = scrape_sections()
+    for section in sections:
+        print(section)
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""
@@ -133,9 +135,21 @@ def scrape_sections():
     soup = BeautifulSoup(myRequest.text, "html.parser")
 
     # step through the tag hierarchy
-    table = soup.find("table", attrs={"id": "listing"}).find("tbody")
-    # for row in table:
-        # print(row)
+    table = soup.find_all("tr", attrs={"class": "entry1 active"})
+
+    for row in table:
+        id = int(row.find("td", attrs={"class": "courseName active"}).find("a")["title"].split(" ")[1])
+        section = int(row.find("td", attrs={"class": "courseSection"}).text)
+        days = row.find("td", attrs={"class": "courseDays"}).text.strip()
+        start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
+        end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
+        times_offered = ""
+        if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:
+            times_offered = days + " " + start_time + "-" + end_time
+        sections.append(Section(id, section, times_offered, cap, teacher))
+
 
     return sections
 
