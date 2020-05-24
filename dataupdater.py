@@ -9,7 +9,7 @@ and any other relevant website, collection all the stats course data, and popula
 
 def main():
     courses = scrape_courses()
-
+    print(courses)
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""
@@ -100,7 +100,7 @@ def scrape_courses():
             break
         else:
             id = row.find("td", {"class": "codecol"}).text.split()[1]
-            print(id)
+            #print(id)
             electives.append(int(id))
     for course in courses:
         if course.id in electives:
