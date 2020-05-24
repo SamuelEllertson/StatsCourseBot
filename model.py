@@ -1,7 +1,7 @@
 from queryspec import Intent
 import nltk
 import string
-
+from typing import Tuple, List
 
 """This is for parsing the intent from a message, as well as extracting the relevant information
 from a message based on the intent"""
@@ -13,7 +13,7 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
 
-    def extract_variables(self, query: str) -> Tuple[str, typing.List[str]]:
+    def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from that query, then generalizes the query.
             Returns the list of variables and the generalized form of that query."""
         tokens = nltk.word_tokenize(query)

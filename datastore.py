@@ -2,8 +2,6 @@
 import json
 from dataclasses import dataclass, field
 
-# import mysql.connector
-# from mysql.connector import Error
 import pymysql.cursors
 import pymysql.connections
 import warnings
@@ -60,7 +58,6 @@ class DataStore():
             config = json.load(config_file)
 
         self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
-        #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
 
     ### 'public' methods up here
 
