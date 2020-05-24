@@ -56,7 +56,7 @@ class DataStore():
 
         with open("db_dev.json" if args.dev_mode else "db.json") as config_file:
             config = json.load(config_file)
-            print(config)
+            #print(config)
 
         self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
         #create connection to db based on config. Here are the docs https://pynative.com/python-mysql-database-connection/
@@ -75,10 +75,10 @@ class DataStore():
         # cursor = self.connection.cursor()
             sql = """
             INSERT INTO course (id, prereqs, units, title, about, coding_involved, elective, terms)
-                VALUES (course.id, course.prereqs, course.units, course.title, course.about, course.coding_involved
-                course.elective, course.terms);
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             """
-            cursor.execute(sql)
+            cursor.execute(sql, (course.id, course.prereqs, course.units, course.title, course.about, course.coding_involved,
+                course.elective, course.terms))
         self.connection.commit()
 
     def insert_section(self, section: Section) -> None:
@@ -87,10 +87,10 @@ class DataStore():
         with self.connection.cursor() as cursor:
             sql = """
             INSERT INTO sections (course_id, section_id, times_offered, enrollment_cap, teacher)
-                VALUES (section.course_id, section.section_id, section.times_offered, section.enrollment_cap,
-                 section.teacher);
+                VALUES (%s, %s, %s, %s, %s);
             """
-            cursor.execute(sql)
+            cursor.execute(sql, (section.course_id, section.section_id, section.times_offered, section.enrollment_cap,
+                 section.teacher))
         self.connection.commit()
 
 
@@ -106,7 +106,7 @@ class DataStore():
 
     ### Helper methods down here
 
-
+    
     def test_db(self) -> None:
         cursor = self.connection.cursor()
         sql = "SELECT `*` FROM `Cities`"

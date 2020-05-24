@@ -2,7 +2,9 @@
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
-from iohandler import IOHandler
+from datastore import Course
+from datastore import Section
+# from iohandler import IOHandler
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
@@ -31,7 +33,12 @@ def main():
 def test():
     args = get_args()
     datastore = DataStore(args)
-    datastore.test_db()
+    # datastore.test_db()
+    course = Course(1, "fun", "class", "good", "stuff", 0, 1, "winter")
+    section = Section(1,2, "hi", 3, "classfun")
+    
+    datastore.insert_course(course)
+    datastore.insert_section(section)
     
 if __name__ == '__main__':
     #main()
