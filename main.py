@@ -32,6 +32,7 @@ def test():
     args = get_args()
     datastore = DataStore(args)
     datastore.test_db()
+    
 if __name__ == '__main__':
     #main()
     test()
