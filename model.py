@@ -13,7 +13,9 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
 
-    def extract_variables(self, query: str) -> Tuple[str, typing.List[str]]:
+        # -> Tuple[str, typing.List[str]]:
+
+    def extract_variables(self, query: str):
         """Takes in a raw query from the user and extracts the variables from that query, then generalizes the query.
             Returns the list of variables and the generalized form of that query."""
         tokens = nltk.word_tokenize(query)
@@ -67,3 +69,4 @@ class Model:
         It could be in the form of some or parts of its title, or its course id.
         It should aggressively try its options to come up with its best guess, or None if it has no idea"""
         return 312
+

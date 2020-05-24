@@ -3,6 +3,7 @@ import argparse
 from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
 from iohandler import IOHandler
+from model import Model
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
@@ -28,5 +29,18 @@ def main():
 
     iohandler.listen()
 
+
+def test_model():
+    args = get_args()
+
+    datastore = DataStore(args)
+    iohandler = IOHandler(args, datastore)
+
+    model = Model(args, datastore, iohandler)
+
+    res = model.extract_variables("What classes can I take after taking STAT312?")
+    print(res)
+
 if __name__ == '__main__':
-    main()
+    # main()
+    test_model()

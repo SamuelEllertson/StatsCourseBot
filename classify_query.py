@@ -98,5 +98,3 @@ def main():
     # print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
 
 
-if __name__ == "__main__":
-    main()
