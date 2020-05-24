@@ -125,9 +125,9 @@ class DataStore():
     
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
-        sql = "SELECT * FROM course WHERE id = %s"
+        query = "SELECT * FROM course WHERE id = %s"
 
-        result = self.execute_query(sql, id, one_result=True)
+        result = self.execute_query(query, id, one_result=True)
 
         if result is None:
             return None
@@ -136,7 +136,7 @@ class DataStore():
 
     ### Helper methods down here
 
-    def execute_query(self, query: str, arguments: list = None, one_result : bool = False) -> None:
+    def execute_query(self, query: str, arguments: list = None, one_result : bool = False):
         with self.connection.cursor() as cursor:
 
             with warnings.catch_warnings():
