@@ -5,6 +5,7 @@ import re
 from sklearn.neighbors import KNeighborsClassifier
 from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
+from difflib import get_close_matches
 import numpy as np
 
 
@@ -28,6 +29,7 @@ class Model:
         tags = nltk.pos_tag(tokens)
         general_query = ""
         terms = ["summer", "spring", "fall", "winter"]
+        titles = self.datastore.get_course_titles()
         vars = []
         stop_words = set(nltk.corpus.stopwords.words("english"))
         topic_words = ["on", "about", "covering"]
@@ -37,14 +39,9 @@ class Model:
             if tags[i][1] == "CD":
                 vars.append(tags[i][0])
                 general_query += "[CLASS] "
-                # # A list of classes is represented as [CLASSES]
-                # if "[CLASS]" in general_query:
-                #     general_query = general_query.replace("[CLASS]", "[CLASSES]")
-                # elif "[CLASSES]" not in general_query:
-                #     general_query += "[CLASS] "
             # Term name found
             elif tags[i][0].lower() in terms:
-                # vars.append(tags[i][0].lower())
+                vars.append(tags[i][0].lower())
                 general_query += "[TERM] "
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words:
@@ -64,7 +61,39 @@ class Model:
                 general_query += tags[i][0]
                 general_query += " "
             i += 1
-        return general_query.strip(), vars
+        # Didn't find any variables first pass, now look for titles of classes.
+        if len(vars) == 0:
+            i = 0
+            j = 0
+            # Use a sliding window to check every subsequence for a possible class title
+            while i < len(tags):
+                while j < i:
+                    # Only match to a course title if the phrase is very close
+                    phrase = " ".join([t[0].capitalize() for t in tags[j : i + 1]])
+                    matches = get_close_matches(phrase, titles, n=1, cutoff=0.8)
+                    if len(matches) > 0:
+                        vars.append(matches[0])
+                        first = True
+                        # Replace the first word in the title with a variable, remove the rest
+                        for word in matches[0].split(" "):
+                            if first:
+                                general_query = general_query.replace(word, "[CLASS]")
+                                general_query = general_query.replace(
+                                    word.lower(), "[CLASS]"
+                                )
+                                first = False
+                            else:
+                                general_query = general_query.replace(word, "")
+                                general_query = general_query.replace(word.lower(), "")
+                        # print(
+                        #     re.sub(" +", " ", general_query.strip()) + ": " + str(vars)
+                        # )
+                        return re.sub(" +", " ", general_query.strip()), vars
+                    j += 1
+                i += 1
+                j = 0
+        # print(re.sub(" +", " ", general_query.strip()) + ": " + str(vars))
+        return re.sub(" +", " ", general_query.strip()), vars
 
     def train_model(self, training):
         """Creates and trains a K-nearest-neighbors algorithm on the query data."""

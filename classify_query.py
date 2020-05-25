@@ -11,6 +11,8 @@ from sklearn import metrics
 from collections import defaultdict
 from typing import Tuple, List
 from model import Model
+from main import get_args
+from datastore import DataStore
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
@@ -57,7 +59,9 @@ def main():
             words = item[1].split(" ")
             records.append(Record(item[1], item[2]))
 
-    model = Model(None, None, None)
+    args = get_args()
+    datastore = DataStore(args)
+    model = Model(args, datastore, None)
     model.train_model(records)
 
     with open("queries.txt") as fd:
@@ -66,10 +70,10 @@ def main():
         queries = [x.replace("STAT", "") for x in lines]
 
         for query in queries:
-            test.append(model.extract_variables(query)[0])
+            test.append(model.extract_variables(query))
 
     for query in test:
-        print(query + ": " + model.predict_query(query))
+        print(query[0] + ": " + model.predict_query(query[0]) + " | " + str(query[1]))
 
     # # # Test-train split, 80% train 20% test
     # records = get_records(records)
@@ -79,16 +83,6 @@ def main():
     #     train_size=0.6,
     #     stratify=[r.answer for r in records],
     # )
-
-    # print(y_train)
-    # print(y_test)
-    # # Use TF-IDF for features
-    # tfid = TfidfVectorizer(stop_words=stop_words)
-    # tfid.fit([r.query for r in records])
-    # X_train = tfid.transform(X_train)
-    # X_test = tfid.transform(X_test)
-
-    # model = KNeighborsClassifier(n_neighbors=4)
 
     # model.fit(X_train, y_train)
 
