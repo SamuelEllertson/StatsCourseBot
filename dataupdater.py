@@ -12,22 +12,16 @@ and any other relevant website, collection all the stats course data, and popula
 
 def main():
     courses = scrape_courses()
-    #sections = scrape_sections()
+    sections = scrape_sections()
     args = get_args()
     datastore = DataStore(args)
     datastore.clear()
     for i in range(len(courses)):
-        #print(courses[i].as_list())
         datastore.insert_course(courses[i])
         
-        print(courses[i])
-    # for i in range(len(sections)):
-    #     datastore.insert_section(sections[i]) #annoying to always be on vpn
-
-    print(courses)
-    sections = scrape_sections()
-    for section in sections:
-        print(section)
+    for i in range(len(sections)):
+        datastore.insert_section(sections[i])
+    
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""
