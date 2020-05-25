@@ -37,15 +37,15 @@ class Model:
             if tags[i][1] == "CD":
                 vars.append(tags[i][0])
                 general_query += "[CLASS] "
-                # A list of classes is represented as [CLASSES]
+                # # A list of classes is represented as [CLASSES]
                 # if "[CLASS]" in general_query:
                 #     general_query = general_query.replace("[CLASS]", "[CLASSES]")
                 # elif "[CLASSES]" not in general_query:
                 #     general_query += "[CLASS] "
             # Term name found
             elif tags[i][0].lower() in terms:
-                vars.append(tags[i][0].lower())
-                general_query += "[TERM] "  # why no space here?
+                # vars.append(tags[i][0].lower())
+                general_query += "[TERM] "
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words:
                 j = i + 1
