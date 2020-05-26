@@ -50,11 +50,11 @@ class Course:
             self.about, 
             self.coding_involved,
             self.elective, 
-            ','.join(self.terms)
+            ",".join(self.terms)
         ]
 
     def from_db(db_result):
-        '''Constructs a new course from a database result object, doing the necessary transformations'''
+        '''Constructs a new course from a database result object, doing the necessary transformations.'''
         args = list(db_result)
 
         #convert 0,1 to actual boolean
@@ -104,13 +104,13 @@ class DataStore():
         self.connection = pymysql.connect(config["host"], config["username"], config["password"], config["database"]) 
 
     def clear(self) -> None:
-        '''Clears the database of all entries'''
+        '''Clears the database of all entries.'''
 
         self.execute_query("DELETE FROM sections;")
         self.execute_query("DELETE FROM course;")
 
     def insert_course(self, course: Course) -> None:
-        '''inserts course information into the database'''
+        '''Inserts a course into the database.'''
 
         query = "INSERT IGNORE INTO course VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
 
@@ -123,15 +123,23 @@ class DataStore():
         self.execute_query(query, section.as_list())
 
     def get_course_ids(self) -> set:
-        '''returns a set of all course ids'''
+        '''Returns a set of all course ids.'''
         query = "SELECT id FROM course"
+
+        results = self.execute_query(query)
+
+        return set(result[0] for result in results)
+
+    def get_course_titles(self) -> set:
+        '''Returns a set of all course titles.'''
+        query = "SELECT title FROM course"
 
         results = self.execute_query(query)
 
         return set(result[0] for result in results)
     
     def get_course_from_id(self, id: int) -> Course:
-        '''Returns a course object from its course_id, or None if that id doesnt exist'''
+        '''Returns a course object from its course_id, or None if that id doesn't exist'''
         query = "SELECT * FROM course WHERE id = %s"
 
         result = self.execute_query(query, id, one_result=True)
@@ -152,6 +160,7 @@ class DataStore():
     ### Helper methods down here
 
     def execute_query(self, query: str, arguments: list = None, one_result : bool = False):
+        '''Execute a SQL query to the database'''
         with self.connection.cursor() as cursor:
 
             with warnings.catch_warnings():
