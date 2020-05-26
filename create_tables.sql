@@ -18,6 +18,7 @@ create table sections (
     times_offered varchar(50) not null,
     enrollment_cap int not null,
     teacher varchar(100) not null,
-    PRIMARY KEY (course_id, section_id),
+    current_quarter boolean not null,
+    PRIMARY KEY (course_id, section_id, current_quarter),
     constraint FK_COURSE foreign key (course_id) references course(id) on delete cascade
 );
