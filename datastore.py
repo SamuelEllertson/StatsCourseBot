@@ -44,7 +44,7 @@ class Course:
     def as_list(self):
         return [
             self.id, 
-            "".join(self.prereqs), 
+            self.prereqs, 
             self.units, 
             self.title, 
             self.about, 
@@ -117,13 +117,8 @@ class DataStore():
         self.execute_query(query, course.as_list())
 
     def insert_section(self, section: Section) -> None:
-<<<<<<< HEAD
         '''Inserts a section into the database'''
         query = "INSERT IGNORE INTO sections VALUES (%s, %s, %s, %s, %s);"
-=======
-        '''inserts section into database'''
-        query = "INSERT IGNORE INTO sections VALUES (%s, %s, %s, %s, %s, %s);"
->>>>>>> bcb28b25e73fa572a1768f733b2dbad830ab7492
 
         self.execute_query(query, section.as_list())
 
