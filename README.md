@@ -1,6 +1,6 @@
 
 
-## Authors: Samuel Ellertson, Noah Stapp, Max Barshay
+## Authors: Samuel Ellertson, Noah Stapp, Max Barshay, Matthew Bennin
 
 ### Setup: Create a virtual environment, activate it, and do 'pip install -r requirements.txt'
 
