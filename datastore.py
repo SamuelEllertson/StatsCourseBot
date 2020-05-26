@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 import pymysql.cursors
 import pymysql.connections
 import warnings
+from typing import Set, List
 
 '''Provides high level access methods to data stored in the database
 
@@ -28,7 +29,6 @@ prefer returning None or an empty set instead of raising an error, unless it mak
 keep the 'public' methods up at the top, with internal methods at the bottom, so that its clear what is 
 intended for use elsewhere in the code
 '''
-
 
 @dataclass
 class Course:
@@ -68,11 +68,12 @@ class Course:
 
 @dataclass
 class Section:
-    course_id      : int
-    section_id     : int
-    times_offered  : str
-    enrollment_cap : int
-    teacher        : str
+    course_id       : int
+    section_id      : int
+    times_offered   : str
+    enrollment_cap  : int
+    teacher         : str
+    current_quarter : bool
 
     def as_list(self):
         return [
@@ -80,11 +81,17 @@ class Section:
             self.section_id,
             self.times_offered,
             self.enrollment_cap,
-            self.teacher
+            self.teacher,
+            self.current_quarter
         ]
 
     def from_db(db_result):
-        return Section(*db_result)
+        args = list(db_result)
+
+        #convert result to proper bool
+        args[5] = bool(args[5])
+
+        return Section(*args)
 
 class DataStore():
 
@@ -111,7 +118,7 @@ class DataStore():
 
     def insert_section(self, section: Section) -> None:
         '''inserts section into database'''
-        query = "INSERT IGNORE INTO sections VALUES (%s, %s, %s, %s, %s);"
+        query = "INSERT IGNORE INTO sections VALUES (%s, %s, %s, %s, %s, %s);"
 
         self.execute_query(query, section.as_list())
 
@@ -133,6 +140,14 @@ class DataStore():
             return None
 
         return Course.from_db(result)
+
+    def get_sections_from_id_and_quarter(self, course_id: int, current_quarter: bool) -> List[Section]:
+        '''Returns a list of Section objects for the given course_id and quarter.'''
+        query = "SELECT * FROM sections WHERE course_id = %s and current_quarter = %s"
+
+        results = self.execute_query(query, [course_id, current_quarter])
+
+        return [Section.from_db(result) for result in results]
 
     ### Helper methods down here
 
