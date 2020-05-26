@@ -22,9 +22,7 @@ def scrape_data(args) -> None:
     datastore.clear()
     for i in range(len(courses)):
         datastore.insert_course(courses[i])
-        
     for i in range(len(sections)):
-        print(sections[i])
         datastore.insert_section(sections[i])
     
 
