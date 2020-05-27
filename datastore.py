@@ -122,7 +122,7 @@ class DataStore():
 
         self.execute_query(query, section.as_list())
 
-    def get_course_ids(self) -> set: # do we want more annotation?
+    def get_course_ids(self) -> set: 
         '''returns a set of all course ids'''
         query = "SELECT id FROM course"
 
