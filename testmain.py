@@ -2,9 +2,7 @@
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
-from dataupdater import scrape_data
 from iohandler import IOHandler
-from model import Model
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
@@ -22,31 +20,19 @@ def get_args():
     parser.add_argument('--bot-name',    dest="bot_name",    metavar= "name",    default='StatsCourseBot',   help='Sets bot name')
     return parser.parse_args()
 
-
 def main():
     args = get_args()
 
-    if args.scrape:
-        scrape_data(args)
-        return
-
     datastore = DataStore(args)
-    iohandler = IOHandler(args, datastore)
+    # iohandler = IOHandler(args, datastore)
 
-    iohandler.listen()
+    # iohandler.listen()
+    print(datastore.get_units_from_class(425))
+    print(datastore.get_prereqs_for_class(425))
+    print(datastore.get_title_of_class(425))
+    print(datastore.get_coding_involved_of_class(425))
+    print(datastore.get_terms_of_class(218))
 
-
-def test_model():
-    args = get_args()
-
-    datastore = DataStore(args)
-    iohandler = IOHandler(args, datastore)
-
-    model = Model(args, datastore, iohandler)
-
-    res = model.extract_variables("What classes can I take after taking STAT312?")
-    print(res)
 
 if __name__ == '__main__':
-    # main()
-    test_model()
+    main()

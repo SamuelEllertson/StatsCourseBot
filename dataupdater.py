@@ -2,26 +2,25 @@
 import os, sys, random, requests, re
 from bs4 import BeautifulSoup
 from datastore import Course, Section
-from main import get_args
 from datastore import DataStore
 
 
 """This file will be run entirely independantly of the rest of the code. Its job is to scrape the catalog
 and any other relevant website, collection all the stats course data, and populate the database"""
 
-
-def main():
-    courses = scrape_courses()
-    sections = scrape_sections()
-    args = get_args()
+def scrape_data(args) -> None:
+    """Scrapes all data sources and populates the database with all relevant data."""
     datastore = DataStore(args)
     datastore.clear()
-    for i in range(len(courses)):
-        datastore.insert_course(courses[i])
-        
-    for i in range(len(sections)):
-        datastore.insert_section(sections[i])
     
+    courses = scrape_courses()
+    sections = scrape_sections()
+
+    for course in courses:
+        datastore.insert_course(course)
+
+    for section in sections:
+        datastore.insert_section(section)
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""
@@ -120,11 +119,11 @@ def scrape_courses():
     return courses
 
 def scrape_sections():
-    """Scrapes https://schedules.calpoly.edu/subject_STAT_next.htm for next section data."""
+    """Scrapes https://schedules.calpoly.edu/subject_STAT_next.htm and https://schedules.calpoly.edu/subject_STAT_curr.htm for next and current section data."""
 
     sections = []
 
-    # obtain the content of the URL in HTML
+    # Next quarter
     url = "https://schedules.calpoly.edu/subject_STAT_next.htm"
     myRequest = requests.get(url)
 
@@ -132,10 +131,13 @@ def scrape_sections():
     soup = BeautifulSoup(myRequest.text, "html.parser")
 
     # step through the tag hierarchy
-    table = soup.find_all("tr", attrs={"class": "entry1 active"})
+    regex = re.compile('entry[1-9] active')
+    table = soup.find_all("tr", attrs={"class": regex})
 
     for row in table:
-        id = int(row.find("td", attrs={"class": "courseName active"}).find("a")["title"].split(" ")[1])
+        id = row.find("td", attrs={"class": "courseName active"})
+        if id is not None:
+            id = int(''.join((filter(str.isdigit, row.find("td", attrs={"class": "courseName active"}).find("a")["title"].split(" ")[1]))))
         section = int(row.find("td", attrs={"class": "courseSection"}).text)
         days = row.find("td", attrs={"class": "courseDays"}).text.strip()
         start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
@@ -145,13 +147,35 @@ def scrape_sections():
         times_offered = ""
         if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:
             times_offered = days + " " + start_time + "-" + end_time
-        sections.append(Section(id, section, times_offered, cap, teacher))
+        sections.append(Section(id, section, times_offered, cap, teacher, False))
+
+    
+    # Current quarter
+    url = "https://schedules.calpoly.edu/subject_STAT_curr.htm"
+    myRequest = requests.get(url)
+
+    # Create a soup object that parses the HTML
+    soup = BeautifulSoup(myRequest.text, "html.parser")
+
+    # step through the tag hierarchy
+    regex = re.compile('entry[1-9] active')
+    table = soup.find_all("tr", attrs={"class": regex})
+
+    for row in table:
+        id = row.find("td", attrs={"class": "courseName active"})
+        if id is not None:
+            id = int(''.join((filter(str.isdigit, row.find("td", attrs={"class": "courseName active"}).find("a")["title"].split(" ")[1]))))
+        section = int(row.find("td", attrs={"class": "courseSection"}).text)
+        days = row.find("td", attrs={"class": "courseDays"}).text.strip()
+        start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
+        end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
+        times_offered = ""
+        if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:
+            times_offered = days + " " + start_time + "-" + end_time
+        sections.append(Section(id, section, times_offered, cap, teacher, True))
+
 
 
     return sections
-
-
-
-if __name__ == "__main__":
-    main()
-
