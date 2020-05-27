@@ -1,6 +1,5 @@
 
 import json
-from dataclasses import dataclass, field
 
 import pymysql.cursors
 import pymysql.connections
@@ -30,16 +29,16 @@ keep the 'public' methods up at the top, with internal methods at the bottom, so
 intended for use elsewhere in the code
 '''
 
-@dataclass
-class Course:
-    id              : int
-    prereqs         : str
-    units           : str
-    title           : str
-    about           : str
-    coding_involved : bool = False
-    elective        : bool = False
-    terms           : set  = field(default_factory=set)
+class Course():
+    def __init__(self, id : int, prereqs : str, units : str, title : str, about : str, coding_involved : bool, elective : bool, terms : set):
+        self.id = id
+        self.prereqs = prereqs
+        self.units = units
+        self.title = title
+        self.about = about
+        self.coding_involved = coding_involved
+        self.elective = elective
+        self.terms = terms
 
     def as_list(self):
         return [
@@ -53,7 +52,7 @@ class Course:
             ",".join(self.terms)
         ]
 
-    def from_db(db_result):
+    def from_db(self, db_result):
         '''Constructs a new course from a database result object, doing the necessary transformations.'''
         args = list(db_result)
 
@@ -66,14 +65,14 @@ class Course:
 
         return Course(*args)
 
-@dataclass
-class Section:
-    course_id       : int
-    section_id      : int
-    times_offered   : str
-    enrollment_cap  : int
-    teacher         : str
-    current_quarter : bool
+class Section():
+    def __init__(self, course_id : int, section_id : int, times_offered : str, enrollment_cap : int , teacher : str, current_quarter : bool):
+        self.course_id = course_id
+        self.section_id = section_id
+        self.times_offered = times_offered
+        self.enrollment_cap = enrollment_cap
+        self.teacher = teacher
+        self.current_quarter = current_quarter
 
     def as_list(self):
         return [
@@ -85,7 +84,7 @@ class Section:
             self.current_quarter
         ]
 
-    def from_db(db_result):
+    def from_db(self, db_result):
         args = list(db_result)
 
         #convert result to proper bool
