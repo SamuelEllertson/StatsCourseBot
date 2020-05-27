@@ -132,9 +132,9 @@ class DataStore():
     
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
-        query = "SELECT * FROM course WHERE id = %s"
+        query = "SELECT * FROM course WHERE id = %s;"
 
-        result = self.execute_query(query, id, one_result=True)
+        result = self.execute_query(query, [id], one_result=True)
 
         if result is None:
             return None
@@ -143,11 +143,21 @@ class DataStore():
 
     def get_sections_from_id_and_quarter(self, course_id: int, current_quarter: bool) -> List[Section]:
         '''Returns a list of Section objects for the given course_id and quarter.'''
-        query = "SELECT * FROM sections WHERE course_id = %s and current_quarter = %s"
+        query = "SELECT * FROM sections WHERE course_id = %s and current_quarter = %s;"
 
         results = self.execute_query(query, [course_id, current_quarter])
 
         return [Section.from_db(result) for result in results]
+
+    def get_units_from_class(self, course_id: int) -> str:
+        """Returns the number of units that a class counts for"""
+        query = "SELECT units from course where id = %s;"
+
+        results = self.execute_query(query, [course_id], one_result=True)
+        
+        return results[0] 
+
+    
 
     ### Helper methods down here
 
@@ -170,3 +180,5 @@ class DataStore():
         self.connection.commit()
 
         return result
+
+
