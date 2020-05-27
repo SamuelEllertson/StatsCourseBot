@@ -2,17 +2,11 @@
 import os, sys, random, requests, re
 from bs4 import BeautifulSoup
 from datastore import Course, Section
-from main import get_args
 from datastore import DataStore
 
 
 """This file will be run entirely independantly of the rest of the code. Its job is to scrape the catalog
 and any other relevant website, collection all the stats course data, and populate the database"""
-
-
-def main():
-    args = get_args()
-    scrape_data(args)
 
 def scrape_data(args) -> None:
     """Scrapes all data sources and populates the database with all relevant data."""
@@ -185,9 +179,3 @@ def scrape_sections():
 
 
     return sections
-
-
-
-if __name__ == "__main__":
-    main()
-
