@@ -50,10 +50,11 @@ def main():
     nltk.download("tagsets")
     nltk.download("punkt")
     punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
-    with open("data.txt") as fd:
+    with open("query.txt") as fd:
         lines = fd.readlines()
         lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
         items = [x.split("|") for x in lines]
+        items = [i for i in items if i[0] == "B4"]
 
         for item in items:
             words = item[1].split(" ")
@@ -64,7 +65,7 @@ def main():
     model = Model(args, datastore, None)
     model.train_model(records)
 
-    with open("queries.txt") as fd:
+    with open("test_queries.txt") as fd:
         lines = fd.readlines()
         lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
         queries = [x.replace("STAT", "") for x in lines]

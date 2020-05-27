@@ -29,20 +29,31 @@ class Model:
         tags = nltk.pos_tag(tokens)
         general_query = ""
         terms = ["summer", "spring", "fall", "winter"]
+        teacher_titles = ["professor", "prof", "mr", "mrs"]
         titles = self.datastore.get_course_titles()
         vars = []
         stop_words = set(nltk.corpus.stopwords.words("english"))
         topic_words = ["on", "about", "covering"]
         i = 0
+        # Remove course prefixes, if any
+        query = query.replace("STAT", "")
         while i < len(tags):
             # Class id found
-            if tags[i][1] == "CD":
+            if tags[i][1] == "CD" and int(tags[i][0]) > 100:
                 vars.append(tags[i][0])
-                general_query += "[CLASS] "
+                general_query += "[class] "
+            # Units found
+            elif tags[i][1] == "CD" and int(tags[i][0]) < 100:
+                vars.append(tags[i][0])
+                general_query += "[units] "
             # Term name found
             elif tags[i][0].lower() in terms:
                 vars.append(tags[i][0].lower())
-                general_query += "[TERM] "
+                general_query += "[term] "
+            elif tags[i][0].lower() in teacher_titles:
+                vars.append(tags[i + 1][0].lower())
+                general_query += "[professor] "
+                i += 1
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words:
                 j = i + 1
@@ -55,7 +66,7 @@ class Model:
                     vars.append(tags[j][0].lower())
                     j += 1
                 general_query += tags[i][0] + " "
-                general_query += "[TOPIC] "
+                general_query += "[topic] "
                 i = j - 1
             else:
                 general_query += tags[i][0]
@@ -139,18 +150,20 @@ class Model:
         # First get all the variables out and weight them twice as much as everything else, weight of 100
         variables = re.findall(r"(\[(.*?)\])", query)
         for var in variables:
-            features[var[0]] = 100
+            features[var[0]] = 75
             query = query.replace(var[0], "")
 
         # Tokenize, lowercase, and lemmatize all non-variable words, then remove all stop words
         words = nltk.word_tokenize(query)
         words = [word.lower() for word in words]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
-        words = [w for w in words if w not in stop_words]
 
-        # Add all non-stop words to features with weight of 50
-        for word in words:
-            features[word] = 50
+        # Add first word to features with weight of 75, changes intent drastically.
+        features[words[0]] = 50
+        for word in words[1:]:
+            # Add all non-stop words to features with weight of 50
+            if word not in stop_words:
+                features[word] = 25
         return features
 
     def get_intent(self, message: str) -> Intent:
