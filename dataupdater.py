@@ -16,15 +16,17 @@ def main():
 
 def scrape_data(args) -> None:
     """Scrapes all data sources and populates the database with all relevant data."""
-    courses = scrape_courses()
-    sections = scrape_sections()
     datastore = DataStore(args)
     datastore.clear()
-    for i in range(len(courses)):
-        datastore.insert_course(courses[i])
-    for i in range(len(sections)):
-        datastore.insert_section(sections[i])
     
+    courses = scrape_courses()
+    sections = scrape_sections()
+
+    for course in courses:
+        datastore.insert_course(course)
+
+    for section in sections:
+        datastore.insert_section(section)
 
 def scrape_courses():
     """Scrapes http://catalog.calpoly.edu/coursesaz/stat/ and https://registrar.calpoly.edu/term-typically-offered for course data."""

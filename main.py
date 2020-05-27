@@ -2,6 +2,7 @@
 import argparse
 from argparse import ArgumentDefaultsHelpFormatter as Formatter
 from datastore import DataStore
+from dataupdater import scrape_data
 from iohandler import IOHandler
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
@@ -20,8 +21,13 @@ def get_args():
     parser.add_argument('--bot-name',    dest="bot_name",    metavar= "name",    default='StatsCourseBot',   help='Sets bot name')
     return parser.parse_args()
 
+
 def main():
     args = get_args()
+
+    if args.scrape:
+        scrape_data(args)
+        return
 
     datastore = DataStore(args)
     iohandler = IOHandler(args, datastore)
