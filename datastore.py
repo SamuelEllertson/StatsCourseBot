@@ -122,7 +122,7 @@ class DataStore():
 
         self.execute_query(query, section.as_list())
 
-    def get_course_ids(self) -> set:
+    def get_course_ids(self) -> set: # do we want more annotation?
         '''returns a set of all course ids'''
         query = "SELECT id FROM course"
 
@@ -151,13 +151,62 @@ class DataStore():
 
     def get_units_from_class(self, course_id: int) -> str:
         """Returns the number of units that a class counts for"""
-        query = "SELECT units from course where id = %s;"
+        query = "SELECT units FROM course WHERE id = %s;"
 
         results = self.execute_query(query, [course_id], one_result=True)
         
         return results[0] 
 
-    
+    def get_prereqs_for_class(self, course_id: int) -> str:
+        """Gets the prerequisites for a given class"""
+        query = "SELECT prereqs FROM course WHERE id = %s;"
+
+        results = self.execute_query(query, [course_id], one_result=True)
+
+        return results[0]
+
+    def get_title_of_class(self, course_id: int) -> str:
+        """Gets the title of a given class"""   
+        query = "SELECT title FROM course WHERE id = %s"     
+
+        results = self.execute_query(query, [course_id], one_result=True)
+
+        return results[0]
+
+    def get_about_of_class(self, course_id: int) -> str:
+        """Gets the description of a given class"""   
+        query = "SELECT about FROM course WHERE id = %s"     
+
+        results = self.execute_query(query, [course_id], one_result=True)
+
+        return results[0]
+
+    def get_coding_involved_of_class(self, course_id: int) -> bool:
+        """Gets whether or not coding is involved in a class"""   
+        query = "SELECT coding_involved FROM course WHERE id = %s"     
+
+        results = self.execute_query(query, [course_id], one_result=True)
+
+        return bool(results[0])
+
+    def get_elective_of_class(self, course_id: int) -> bool:
+        """Gets whether or not a class is an elective"""   
+        query = "SELECT elective FROM course WHERE id = %s"     
+
+        results = self.execute_query(query, [course_id], one_result=True)
+
+        return bool(results[0])
+
+    def get_terms_of_class(self, course_id: int) -> Set[str]:
+        """Gets the terms that a given class is offered"""   
+        query = "SELECT terms FROM course WHERE id = %s"     
+
+        results = self.execute_query(query, [course_id])
+
+        split_results = results[0][0].split(",")
+
+        return set(result for result in split_results)
+
 
     ### Helper methods down here
 
@@ -180,5 +229,7 @@ class DataStore():
         self.connection.commit()
 
         return result
+
+
 
 
