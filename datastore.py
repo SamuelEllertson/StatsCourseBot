@@ -122,13 +122,8 @@ class DataStore():
 
         self.execute_query(query, section.as_list())
 
-<<<<<<< HEAD
     def get_course_ids(self) -> set: # do we want more annotation?
         '''returns a set of all course ids'''
-=======
-    def get_course_ids(self) -> set:
-        '''Returns a set of all course ids.'''
->>>>>>> 0171670997986b4eeccd7f59418d16d47d8aae61
         query = "SELECT id FROM course"
 
         results = self.execute_query(query)
@@ -144,13 +139,8 @@ class DataStore():
         return set(result[0] for result in results)
     
     def get_course_from_id(self, id: int) -> Course:
-<<<<<<< HEAD
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
         query = "SELECT * FROM course WHERE id = %s;"
-=======
-        '''Returns a course object from its course_id, or None if that id doesn't exist'''
-        query = "SELECT * FROM course WHERE id = %s"
->>>>>>> 0171670997986b4eeccd7f59418d16d47d8aae61
 
         result = self.execute_query(query, [id], one_result=True)
 
