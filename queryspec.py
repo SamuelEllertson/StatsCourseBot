@@ -33,7 +33,7 @@ class Intent(Enum):
     TIMES_COURSE_OFFERED_NEXT           = auto()
 
     UNITS_OF_COURSE                     = auto()
-    HOURS_FOR_COURSE                    = auto()
+    HOURS_OF_COURSE                    = auto()
 
     PREREQS_OF_COURSE                   = auto()
     DOES_COURSE_HAVE_PREREQS            = auto()
