@@ -13,6 +13,7 @@ from typing import Tuple, List
 from model import Model
 from main import get_args
 from datastore import DataStore
+import random
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
@@ -125,6 +126,7 @@ def validate(records):
     #     [r.answer for r in records],
     #     train_size=0.7
     # )
+    random.shuffle(records)
     split = len(records) // 5
     # print(records)
     test = records[:split]
@@ -151,7 +153,7 @@ def validate(records):
 
             #stratify=[r.answer for r in records]
 
-    model = KNeighborsClassifier(n_neighbors = 1)
+    model = KNeighborsClassifier(n_neighbors = 3)
 
     model.fit(X_train, y_train)
 
