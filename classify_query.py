@@ -5,6 +5,7 @@ import string
 import csv
 from sys import argv
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
@@ -15,18 +16,22 @@ from main import get_args
 from datastore import DataStore
 import random
 from sklearn.metrics import classification_report
+from sklearn.svm import SVC
+from queryspec import Intent
+import re
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
 
 
 class Record:
-    def __init__(self, query, answer):
+    def __init__(self, query, answer, intent):
         self.query = query
         self.answer = answer
+        self.intent = intent
 
     def __repr__(self):
-        return str(self.query) + " | " + str(self.answer)
+        return str(self.query) + " | " + str(self.answer) + " | " + str(self.intent)
 
 
 # Only use intents that have at least two records
@@ -58,36 +63,39 @@ def main():
     with open("query.txt") as fd:
         lines = fd.readlines()
         #print(lines)
-        lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
+        #lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
         #print(lines)
         items = [x.split("|") for x in lines]
         items = [i for i in items if i[0] == "B4"]
         for item in items:
             words = item[1].split(" ")
-            records.append(Record(item[1], item[2]))
+            item[1] = re.sub(r"[\.\?]", "", item[1])
+            item[2] = re.sub(r"[\.\?]", "", item[2])
+            item[3] = re.sub(r'\n', "", item[3]).rstrip()
+            records.append(Record(item[1], item[2], Intent[item[3]]))
         #print(records)
 
     validate(records)
 
-    args = get_args()
-    datastore = DataStore(args)
-    model = Model(args, datastore, None)
-    model.train_model(records)
+    # args = get_args()
+    # datastore = DataStore(args)
+    # model = Model(args, datastore, None)
+    # model.train_model(records)
 
-    with open("test_queries.txt") as fd:
-        lines = fd.readlines()
-        lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
-        queries = [x.replace("STAT", "") for x in lines]
+    # with open("test_queries.txt") as fd:
+    #     lines = fd.readlines()
+    #     lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
+    #     queries = [x.replace("STAT", "") for x in lines]
 
-        for query in queries:
-            test.append(model.extract_variables(query))
+    #     for query in queries:
+    #         test.append(model.extract_variables(query))
 
-    #print(test)
+    # #print(test)
 
-    for query in test:
-        #print(query[0] + ": " + model.predict_query(query[0]))
-        # + " | " + str(query[1]))
-        pass
+    # for query in test:
+    #     #print(query[0] + ": " + model.predict_query(query[0]))
+    #     # + " | " + str(query[1]))
+    #     pass
 
     # # Test-train split, 80% train 20% test
     #records = get_records(records)
@@ -147,14 +155,16 @@ def validate(records):
     X_test = assist_validation(test, model, True)
 
     for trainrecord in train:
-        y_train.append(trainrecord.answer)
+        y_train.append(str(trainrecord.intent))
 
     for testrecord in test:
-        y_test.append(testrecord.answer)
+        y_test.append(str(testrecord.intent))
 
             #stratify=[r.answer for r in records]
 
-    model = KNeighborsClassifier(n_neighbors = 1)
+    #model = KNeighborsClassifier(n_neighbors = 1)
+    model = DecisionTreeClassifier()
+    # model = SVC()
 
     model.fit(X_train, y_train)
 
