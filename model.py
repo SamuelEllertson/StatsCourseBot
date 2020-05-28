@@ -1,4 +1,4 @@
-from queryspec import Intent
+from queryspec import Intent, QueryParameters
 import nltk
 import string
 from typing import Tuple, List
@@ -55,15 +55,9 @@ class Model:
             i += 1
         return general_query.strip(), vars
 
-    def get_intent(self, message: str) -> Intent:
-        """Takes in a raw message, and determines its intent, returning Intent.UNKNOWN
-        if it can not determine within some tolerance. It is permitted, and encouraged, to ask 
-        additional questions to determine a users intent"""
-        return Intent.UNKNOWN
+    def get_intent_and_params(self, message: str) -> Tuple[Intent, QueryParameters]:
+        """Takes in a raw message, and determines its intent and parameters, returning Intent.UNKNOWN 
+        and an empty QueryParameters() if it can not determine within some tolerance. It is permitted,
+        and encouraged, to ask additional questions to determine a users intent"""
 
-    def get_course_id(self, message: str) -> int:
-        """This method is very important, being called on all but one intents. 
-        It takes in a raw message, and determines which single course it is refering to.
-        It could be in the form of some or parts of its title, or its course id.
-        It should aggressively try its options to come up with its best guess, or None if it has no idea"""
-        return 312
+        return Intent.UNKNOWN, QueryParameters()
