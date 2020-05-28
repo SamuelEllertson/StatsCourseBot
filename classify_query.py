@@ -154,7 +154,7 @@ def validate(records):
 
             #stratify=[r.answer for r in records]
 
-    model = KNeighborsClassifier(n_neighbors = 3)
+    model = KNeighborsClassifier(n_neighbors = 1)
 
     model.fit(X_train, y_train)
 
