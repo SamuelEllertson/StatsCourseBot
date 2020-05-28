@@ -157,7 +157,7 @@ class Model:
 
     def get_intent_and_params(self, message: str) -> Tuple[Intent, QueryParameters]:
         """Takes in a raw message, and determines its intent and parameters, returning Intent.UNKNOWN 
-        and an empty QueryParameters() if it can not determine within some tolerance. It is permitted,
+        if it can not determine within some tolerance. It is permitted,
         and encouraged, to ask additional questions to determine a users intent"""
         generalized, variables = self.extract_variables(message)
         params = self.create_query_params(generalized, variables)
