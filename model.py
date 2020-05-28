@@ -5,6 +5,11 @@ import re
 from sklearn.neighbors import KNeighborsClassifier
 from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
+from labeled_data import get_training_data
+import re
+from sklearn.neighbors import KNeighborsClassifier
+from nltk.stem import WordNetLemmatizer
+from typing import Tuple, List
 from difflib import get_close_matches
 import numpy as np
 
@@ -22,9 +27,61 @@ class Model:
         #nltk.download("wordnet")
         self.feature_vector = {}
 
+    def train_model(self):
+        """Creates and trains a K-nearest-neighbors algorithm on the sample query data."""
+        model = KNeighborsClassifier(n_neighbors=1)
+        # Extract features from test set
+        query_intent_map = get_training_data()
+        training = query_intent_map.keys()
+        features = [self.get_features(r) for r in training]
+        intents = [query_intent_map[r].name for r in training]
+        vectors = []
+        # Get a corpus of every feature in the training set
+        for extracted in features:
+            for feature in extracted:
+                if feature not in self.feature_vector:
+                    self.feature_vector[feature] = 0
+
+        # Create a feature vector from the entire corpus for each training record
+        for vector in features:
+            new_features = dict.fromkeys(self.feature_vector, 0)
+            for feature in vector.keys():
+                new_features[feature] = vector[feature]
+            # Convert to values only
+            new_features = np.array(list(new_features.values()))
+            vectors.append(new_features)
+        model.fit(vectors, intents)
+        self.model = model
+
+    def get_features(self, query):
+        """Extracts the features from a generalized query.
+        Uses uneven weighting to ensure that the type of variable matches the predicted intent.
+        Ignores stop words and weights the remaining words evenly."""
+        features = {}
+        stop_words = set(nltk.corpus.stopwords.words("english"))
+        wordnet_lemmatizer = WordNetLemmatizer()
+        # First get all the variables out and weight them twice as much as everything else, weight of 100
+        variables = re.findall(r"(\[(.*?)\])", query)
+        for var in variables:
+            features[var[0]] = 75
+            query = query.replace(var[0], "")
+
+        # Tokenize, lowercase, and lemmatize all non-variable words, then remove all stop words
+        words = nltk.word_tokenize(query)
+        words = [word.lower() for word in words]
+        words = [wordnet_lemmatizer.lemmatize(w) for w in words]
+
+        # Add first word to features with weight of 50, changes intent drastically.
+        features[words[0]] = 50
+        for word in words[1:]:
+            # Add all non-stop words to features with weight of 15
+            if word not in stop_words:
+                features[word] = 25
+        return features
+
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
-        """Takes in a raw query from the user and extracts the variables from that query, then generalizes the query.
-            Returns the list of variables and the generalized form of that query."""
+        """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
+            Returns the generalized form of the query and the list of variables."""
         tokens = nltk.word_tokenize(query)
         tags = nltk.pos_tag(tokens)
         general_query = ""
@@ -46,6 +103,7 @@ class Model:
             elif tags[i][1] == "CD" and int(tags[i][0]) < 100:
                 vars.append(tags[i][0])
                 general_query += "[units] "
+                general_query += "[class] "
             # Term name found
             elif tags[i][0].lower() in terms:
                 vars.append(tags[i][0].lower())
@@ -173,9 +231,39 @@ class Model:
                 features[word] = 25
         return features
 
+
     def get_intent_and_params(self, message: str) -> Tuple[Intent, QueryParameters]:
         """Takes in a raw message, and determines its intent and parameters, returning Intent.UNKNOWN 
         and an empty QueryParameters() if it can not determine within some tolerance. It is permitted,
         and encouraged, to ask additional questions to determine a users intent"""
+        generalized, variables = self.extract_variables(message)
+        params = self.create_query_params(generalized, variables)
+        vector = self.get_features(generalized)
+        features = dict.fromkeys(self.feature_vector, 0)
+        # Create a feature vector from the entire corpus
+        for feature in vector.keys():
+            # Inore any features not in training set
+            if feature in features:
+                features[feature] = vector[feature]
+        features = np.array(list(features.values()))
+        return Intent[self.model.predict([features])[0]], params
 
-        return Intent.UNKNOWN, QueryParameters()
+    def create_query_params(
+        self, generalized: str, variables: List[str]
+    ) -> QueryParameters:
+        """Creates a QueryParameters object from a generalized query and its variables."""
+        var_locations = re.findall(r"(\[(.*?)\])", generalized)
+        class_id = None
+        term = None
+        professor = None
+        topic = None
+        for i in range(len(var_locations)):
+            if var_locations[i][0] == "[class]":
+                class_id = int(variables[i])
+            elif var_locations[i][0] == "[term]":
+                term = variables[i]
+            if var_locations[i][0] == "[professor]":
+                professor = variables[i]
+            if var_locations[i][0] == "[topic]":
+                topic = variables[i]
+        return QueryParameters(class_id, term, professor, topic)

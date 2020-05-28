@@ -24,6 +24,7 @@ class Responder():
         self.datastore = datastore
         self.iohandler = iohandler
         self.model = Model(args, datastore, iohandler)
+        self.model.train_model()
 
         self.intent_to_handler = {
             Intent.UNKNOWN           : self.handler_unknown,
