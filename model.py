@@ -168,7 +168,7 @@ class Model:
         # Add first word to features with weight of 50, changes intent drastically.
         features[words[0]] = 50
         for word in words[1:]:
-            # Add all non-stop words to features with weight of 15
+            # Add all non-stop words to features with weight of 25
             if word not in stop_words:
                 features[word] = 25
         return features
