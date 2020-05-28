@@ -13,11 +13,8 @@
     - type hints on params and return types, for 'public' methods, is prefered
 
 # TODO:
-- Assign questions and create 120 variations total
-- Divide work among us
-    - datastore.py    - SQL stuff
-    - responder.py    - parsing messages and discovering user intent
-    - dataupdater.py  - Scraping and parsing course data
+- finish responder
+- finish model
 - Create presentation
 
 # Components:
@@ -54,10 +51,11 @@ filename: ClassName
     - determines a messages intent based on its raw content
     - has access to the DataStore
 
-- queryspec.py: Intent(Enum)
+- queryspec.py: Intent(Enum), QueryParameters
     - canonical list of all the defined intents
     - also maps an intent to its corresponding query pattern
         - a query pattern is the format of variables in the question
+    - QueryParameters stores the parsed parameters from a users query
 
 - datastore.py: DataStore
     - handles interaction with database
