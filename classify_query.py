@@ -91,15 +91,17 @@ def main():
     #records = get_records(records)
 
 
-def assist_validation(my_data, model):
+def assist_validation(my_data, model, test):
     features = [model.get_features(r.query) for r in my_data]
     #print(features)
     vectors = []
     # Get a corpus of every feature in the training set
-    for extracted in features:
-        for feature in extracted:
-            if feature not in model.feature_vector:
-                model.feature_vector[feature] = 0
+    if test == False:
+        for extracted in features:
+            for feature in extracted:
+                if feature not in model.feature_vector:
+                    model.feature_vector[feature] = 0
+    #print(model.feature_vector)
 
     #print(self.feature_vector)
     #print(features)
@@ -107,7 +109,10 @@ def assist_validation(my_data, model):
     for vector in features:
         new_features = dict.fromkeys(model.feature_vector, 0)
         for feature in vector.keys():
-            new_features[feature] = vector[feature]
+            #print(new_features.keys())
+            if feature in new_features.keys():
+                #print(feature)
+                new_features[feature] = vector[feature]
         # Convert to values only
         new_features = np.array(list(new_features.values()))
         vectors.append(new_features)
@@ -135,8 +140,8 @@ def validate(records):
     datastore = DataStore(args)
     model = Model(args, datastore, None)
 
-    X_train = assist_validation(train, model)
-    X_test = assist_validation(test, model)
+    X_train = assist_validation(train, model, False)
+    X_test = assist_validation(test, model, True)
 
     for trainrecord in train:
         y_train.append(trainrecord.answer)
@@ -144,36 +149,31 @@ def validate(records):
     for testrecord in test:
         y_test.append(testrecord.answer)
 
-    # print(len(X_train))
-    # print(len(y_train))
-
             #stratify=[r.answer for r in records]
 
     model = KNeighborsClassifier(n_neighbors = 1)
 
     model.fit(X_train, y_train)
 
+
+
     # print(len(X_test))
     # print(len(y_test))
 
     # X_test = [item.reshape(1,-1) for item in X_test1]
 
-    # print(X_test[:10])
-    # print(X_train[:10])
-    # new_X_test = []
-    # for i in range(len(X_test)):
-    #     features = np.array(list(X_test[i]))
-    #     new_X_test.append(features)
-    #     #print(features)
     y_pred = model.predict(X_test)
 
-    # print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-    # print(
-    #     "Average Precision:",
-    #     metrics.precision_score(y_test, y_pred, average="weighted"),
-    # )
-    # print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
-    # print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
+    # print(y_pred)
+    # print(y_test)
+
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print(
+        "Average Precision:",
+        metrics.precision_score(y_test, y_pred, average="weighted"),
+    )
+    print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
+    print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
 
 
 if __name__ == "__main__":
