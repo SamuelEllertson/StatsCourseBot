@@ -20,7 +20,6 @@ class Intent(Enum):
     PROFESSOR_COURSES_NEXT              = auto()
 
     IS_COURSE_ELECTIVE                  = auto()
-    APPROVED_ELECTIVES                  = auto()
     ELECTIVES_OFFERED_CURRENT           = auto()
     ELECTIVES_OFFERED_NEXT              = auto()
 
