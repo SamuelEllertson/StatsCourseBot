@@ -1,9 +1,6 @@
 from queryspec import Intent, QueryParameters
 import nltk
 import string
-import re
-from sklearn.neighbors import KNeighborsClassifier
-from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
 from labeled_data import get_training_data
 import re
@@ -24,7 +21,6 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
         self.model = None
-        #nltk.download("wordnet")
         self.feature_vector = {}
 
     def train_model(self):
@@ -96,13 +92,8 @@ class Model:
         query = query.replace("STAT", "")
         while i < len(tags):
             # Class id found
-            if tags[i][1] == "CD" and int(tags[i][0]) > 100:
+            if tags[i][1] == "CD":
                 vars.append(tags[i][0])
-                general_query += "[class] "
-            # Units found
-            elif tags[i][1] == "CD" and int(tags[i][0]) < 100:
-                vars.append(tags[i][0])
-                general_query += "[units] "
                 general_query += "[class] "
             # Term name found
             elif tags[i][0].lower() in terms:
@@ -146,9 +137,9 @@ class Model:
                         # Replace the first word in the title with a variable, remove the rest
                         for word in matches[0].split(" "):
                             if first:
-                                general_query = general_query.replace(word, "[CLASS]")
+                                general_query = general_query.replace(word, "[class]")
                                 general_query = general_query.replace(
-                                    word.lower(), "[CLASS]"
+                                    word.lower(), "[class]"
                                 )
                                 first = False
                             else:
@@ -163,74 +154,6 @@ class Model:
                 j = 0
         # print(re.sub(" +", " ", general_query.strip()) + ": " + str(vars))
         return re.sub(" +", " ", general_query.strip()), vars
-
-    def train_model(self, training):
-        """Creates and trains a K-nearest-neighbors algorithm on the query data."""
-        model = KNeighborsClassifier(n_neighbors=1)
-        # Extract features from test set
-        #print(training)
-        features = [self.get_features(r.query) for r in training]
-        #print(features)
-        vectors = []
-        # Get a corpus of every feature in the training set
-        for extracted in features:
-            for feature in extracted:
-                if feature not in self.feature_vector:
-                    self.feature_vector[feature] = 0
-
-        #print(self.feature_vector)
-        #print(features)
-        # Create a feature vector from the entire corpus for each training record
-        for vector in features:
-            new_features = dict.fromkeys(self.feature_vector, 0)
-            for feature in vector.keys():
-                new_features[feature] = vector[feature]
-            # Convert to values only
-            new_features = np.array(list(new_features.values()))
-            vectors.append(new_features)
-        #print([r.answer for r in training])
-        model.fit(vectors, [r.answer for r in training])
-        self.model = model
-
-    def predict_query(self, query):
-        """Predicts the answer type of a generalized query."""
-        vector = self.get_features(query)
-        features = dict.fromkeys(self.feature_vector, 0)
-        # Create a feature vector from the entire corpus
-        for feature in vector.keys():
-            # Inore any features not in training set
-            if feature in features:
-                features[feature] = vector[feature]
-        features = np.array(list(features.values()))
-        #print(features)
-        return self.model.predict([features])[0]
-
-    def get_features(self, query):
-        """Extracts the features from a generalized query. 
-        Uses uneven weighting to ensure that the type of variable matches the predicted intent.
-        Ignores stop words and weights the remaining words evenly."""
-        features = {}
-        stop_words = set(nltk.corpus.stopwords.words("english"))
-        wordnet_lemmatizer = WordNetLemmatizer()
-        # First get all the variables out and weight them twice as much as everything else, weight of 100
-        variables = re.findall(r"(\[(.*?)\])", query)
-        for var in variables:
-            features[var[0]] = 75
-            query = query.replace(var[0], "")
-
-        # Tokenize, lowercase, and lemmatize all non-variable words, then remove all stop words
-        words = nltk.word_tokenize(query)
-        words = [word.lower() for word in words]
-        words = [wordnet_lemmatizer.lemmatize(w) for w in words]
-
-        # Add first word to features with weight of 50, changes intent drastically.
-        features[words[0]] = 50
-        for word in words[1:]:
-            # Add all non-stop words to features with weight of 25
-            if word not in stop_words:
-                features[word] = 25
-        return features
-
 
     def get_intent_and_params(self, message: str) -> Tuple[Intent, QueryParameters]:
         """Takes in a raw message, and determines its intent and parameters, returning Intent.UNKNOWN 
