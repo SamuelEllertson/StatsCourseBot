@@ -14,6 +14,7 @@ from model import Model
 from main import get_args
 from datastore import DataStore
 import random
+from sklearn.metrics import classification_report
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
@@ -127,7 +128,7 @@ def validate(records):
     #     train_size=0.7
     # )
     random.shuffle(records)
-    split = len(records) // 5
+    split = len(records) // 4
     # print(records)
     test = records[:split]
     train = records[split:]
@@ -169,13 +170,15 @@ def validate(records):
     # print(y_pred)
     # print(y_test)
 
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-    print(
-        "Average Precision:",
-        metrics.precision_score(y_test, y_pred, average="weighted"),
-    )
-    print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
-    print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
+    print(classification_report(y_test, y_pred))
+
+    # print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    # print(
+    #     "Average Precision:",
+    #     metrics.precision_score(y_test, y_pred, average="weighted"),
+    # )
+    # print("Average Recall:", metrics.recall_score(y_test, y_pred, average="weighted"))
+    # print("Average F1:", metrics.f1_score(y_test, y_pred, average="weighted"))
 
 
 if __name__ == "__main__":
