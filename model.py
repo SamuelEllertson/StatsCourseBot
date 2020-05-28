@@ -169,7 +169,7 @@ class Model:
             if feature in features:
                 features[feature] = vector[feature]
         features = np.array(list(features.values()))
-        return self.model.predict([features])[0], params
+        return Intent[self.model.predict([features])[0]], params
 
     def create_query_params(
         self, generalized: str, variables: List[str]

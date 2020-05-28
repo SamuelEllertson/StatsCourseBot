@@ -39,12 +39,11 @@ class Responder():
         and returns a final response message'''
 
         intent, params = self.model.get_intent_and_params(message)
-        print(intent, params)
 
         try:
-            return self.intent_to_handler[Intent[intent]](params)
+            return self.intent_to_handler[intent](params)
         except AttributeError as e:
-            return self.missing_information_response(Intent[intent], params, str(e))
+            return self.missing_information_response(intent, params, str(e))
 
     # Query handlers 
 
