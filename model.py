@@ -19,7 +19,7 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
         self.model = None
-        nltk.download("wordnet")
+        #nltk.download("wordnet")
         self.feature_vector = {}
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
@@ -110,13 +110,18 @@ class Model:
         """Creates and trains a K-nearest-neighbors algorithm on the query data."""
         model = KNeighborsClassifier(n_neighbors=1)
         # Extract features from test set
+        #print(training)
         features = [self.get_features(r.query) for r in training]
+        #print(features)
         vectors = []
         # Get a corpus of every feature in the training set
         for extracted in features:
             for feature in extracted:
                 if feature not in self.feature_vector:
                     self.feature_vector[feature] = 0
+
+        #print(self.feature_vector)
+        #print(features)
         # Create a feature vector from the entire corpus for each training record
         for vector in features:
             new_features = dict.fromkeys(self.feature_vector, 0)
@@ -125,6 +130,7 @@ class Model:
             # Convert to values only
             new_features = np.array(list(new_features.values()))
             vectors.append(new_features)
+        #print([r.answer for r in training])
         model.fit(vectors, [r.answer for r in training])
         self.model = model
 
@@ -138,6 +144,7 @@ class Model:
             if feature in features:
                 features[feature] = vector[feature]
         features = np.array(list(features.values()))
+        #print(features)
         return self.model.predict([features])[0]
 
     def get_features(self, query):
@@ -158,10 +165,10 @@ class Model:
         words = [word.lower() for word in words]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
-        # Add first word to features with weight of 75, changes intent drastically.
+        # Add first word to features with weight of 50, changes intent drastically.
         features[words[0]] = 50
         for word in words[1:]:
-            # Add all non-stop words to features with weight of 50
+            # Add all non-stop words to features with weight of 15
             if word not in stop_words:
                 features[word] = 25
         return features
