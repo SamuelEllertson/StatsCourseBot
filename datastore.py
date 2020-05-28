@@ -52,7 +52,8 @@ class Course():
             ",".join(self.terms)
         ]
 
-    def from_db(self, db_result):
+    @staticmethod
+    def from_db(db_result):
         '''Constructs a new course from a database result object, doing the necessary transformations.'''
         args = list(db_result)
 
@@ -84,7 +85,8 @@ class Section():
             self.current_quarter
         ]
 
-    def from_db(self, db_result):
+    @staticmethod
+    def from_db(db_result):
         args = list(db_result)
 
         #convert result to proper bool
