@@ -59,7 +59,7 @@ class Model:
         # First get all the variables out and weight them twice as much as everything else, weight of 100
         variables = re.findall(r"(\[(.*?)\])", query)
         for var in variables:
-            features[var[0]] = 75
+            features[var[0]] = 100
             query = query.replace(var[0], "")
 
         # Tokenize, lowercase, and lemmatize all non-variable words, then remove all stop words
@@ -68,11 +68,11 @@ class Model:
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
         # Add first word to features with weight of 50, changes intent drastically.
-        features[words[0]] = 50
+        features[words[0]] = 30
         for word in words[1:]:
             # Add all non-stop words to features with weight of 15
             if word not in stop_words:
-                features[word] = 25
+                features[word] = 15
         return features
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:

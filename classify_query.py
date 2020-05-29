@@ -19,6 +19,7 @@ from sklearn.metrics import classification_report
 from sklearn.svm import SVC
 from queryspec import Intent
 import re
+from catboost import CatBoostClassifier
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
@@ -136,7 +137,7 @@ def validate(records):
     #     train_size=0.7
     # )
     random.shuffle(records)
-    split = len(records) // 4
+    split = len(records) // 6
     # print(records)
     test = records[:split]
     train = records[split:]
@@ -163,8 +164,9 @@ def validate(records):
             #stratify=[r.answer for r in records]
 
     #model = KNeighborsClassifier(n_neighbors = 1)
-    model = DecisionTreeClassifier()
+    #model = DecisionTreeClassifier()
     # model = SVC()
+    model = CatBoostClassifier()
 
     model.fit(X_train, y_train)
 
