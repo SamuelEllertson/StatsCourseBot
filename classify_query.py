@@ -73,10 +73,11 @@ def main():
             item[1] = re.sub(r"[\.\?]", "", item[1])
             item[2] = re.sub(r"[\.\?]", "", item[2])
             item[3] = re.sub(r'\n', "", item[3]).rstrip()
+            print(item[2])
             records.append(Record(item[1], item[2], Intent[item[3]]))
         #print(records)
 
-    validate(records)
+    #validate(records)
 
     # args = get_args()
     # datastore = DataStore(args)

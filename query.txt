@@ -197,8 +197,8 @@ B4|Give me the title of [class].|The title of [class] is [title].|TITLE_OF_COURS
 B4|What is [class] known as?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|[class] has what name?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|[class] has what title?|The title of [class] is [title].|TITLE_OF_COURSE
-B4|Name the title of [class].|TITLE_OF_COURSE
-B4|What is the title of [class]|TITLE_OF_COURSE
+B4|Name the title of [class].|The title of [class] is [title].|TITLE_OF_COURSE
+B4|What is the title of [class]|The title of [class] is [title].|TITLE_OF_COURSE
 B4|What’s the number of [class]?|The class number of [class] is [id].|COURSE_ID_OF_COURSE
 B4|What number is [class]?|The class number of [class] is [id].|COURSE_ID_OF_COURSE
 B4|What is [class] number?|The class number of [class] is [id].|COURSE_ID_OF_COURSE
