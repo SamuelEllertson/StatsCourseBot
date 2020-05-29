@@ -40,12 +40,16 @@ class IOHandler():
         '''Main loop of the chatbot. Gets messages, prints response. Returns when program is over'''
 
         while True:
-            message = self.get_message()
+            try:
+                message = self.get_message()
 
-            #Exit condition
-            if self.responder.is_signaling_exit(message):
+                #Exit condition
+                if self.responder.is_signaling_exit(message):
+                    self.send_message(self.responder.get_exit_phrase())
+                    return
+
+                self.send_message(self.responder.get_response(message))
+                
+            except KeyboardInterrupt:
                 self.send_message(self.responder.get_exit_phrase())
-                return
-
-            self.send_message(self.responder.get_response(message))
-
+                break

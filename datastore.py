@@ -32,13 +32,19 @@ intended for use elsewhere in the code
 class Course():
     def __init__(self, id : int, prereqs : str, units : str, title : str, about : str, coding_involved : bool, elective : bool, terms : set):
         self.id = id
-        self.prereqs = prereqs
+        self.prereqs = prereqs or None
         self.units = units
         self.title = title
         self.about = about
         self.coding_involved = coding_involved
         self.elective = elective
         self.terms = terms
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.as_list()})"
+
+    def full_name(self):
+        return f"STAT {self.id}"
 
     def as_list(self):
         return [
@@ -74,6 +80,9 @@ class Section():
         self.enrollment_cap = enrollment_cap
         self.teacher = teacher
         self.current_quarter = current_quarter
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.as_list()})"
 
     def as_list(self):
         return [

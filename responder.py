@@ -6,17 +6,6 @@ from queryspec import Intent, QueryParameters
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
-'''
-Is [class] being offered in [term]?              | Yes/No.
-When can I next take [class]?                    | [class] is typically offered [term(s)]
-How many quarters is [class] usually offered?    | [class] is usually offered in [number] quarters.
-What teachers are offering [class] next quarter? | [professors] are teaching [class] next quarter.
-Is [class] an elective or major course?          | [class] is [a] [type] course.
-
-'''
-
-
-
 class Responder():
 
     def __init__(self, args, datastore, iohandler):
@@ -48,13 +37,27 @@ class Responder():
     # Query handlers 
 
     def handler_unknown(self, params: QueryParameters) -> str:
+        '''This one is special, it should use any params available to craft the best reponse it can'''
         return "unknown intent" #placeholder
 
+    #Use this as a model for implementing the rest
     def handler_prereqs_of_course(self, params: QueryParameters) -> str:
-        return "prereqs are ___" #placeholder
+
+        params.require_class_id() #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+
+        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+
+        #Special case response since prereqs could be None
+        if course.prereqs is None:
+            return f"{course.full_name()} has no prerequisite courses."
+
+        #prefer to use course.full_name() as opposed to course.title
+        return f"The prerequisites for {course.full_name()} are: {course.prereqs}"
 
     def handler_units_of_course(self, params: QueryParameters) -> str:
         return "units are ___" #placeholder
+
+
 
     #Make one for each intent, same function definition for each
 

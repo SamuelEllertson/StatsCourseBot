@@ -40,11 +40,6 @@ B4|Is [class] an elective?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Can I take [class] as an elective?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Does [class] count as an elective?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Is [class] a required course?|Yes/No.|IS_COURSE_ELECTIVE
-B4|Is [class] an elective or major course?|[class] is a [type] course.|TYPE_OF_COURSE
-B4|What type of course is [class]?|[class] is a [type] course.|TYPE_OF_COURSE
-B4|Which courses are approved electives?|[classes] are approved electives.|APPROVED_ELECTIVES 
-B4|What are the statistics electives?|[classes] are approved electives.|APPROVED_ELECTIVES 
-B4|What classes are considered electives?|[classes] are approved electives.|APPROVED_ELECTIVES
 B4|What electives are offered this term?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|Which electives are offered this quarter?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|What electives are offered next term?|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
@@ -88,10 +83,6 @@ B4|Name the prereqs of [class].|The prerequisites for [class] are [classes].|PRE
 B4|Give me the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|How many prereqs does [class] have?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|What is [class] a prerequisite for?|[class] is a prerequisite for [classes].|PREREQS_OF_COURSE
-B4|Does [class] have any prerequisites?|Yes/No.|DOES_COURSE_HAVE_PREREQS
-B4|Do I have to take anything before I take [class]?|Yes/No.|DOES_COURSE_HAVE_PREREQS
-B4|Are there any prerequisites for [class]?|Yes/No.|DOES_COURSE_HAVE_PREREQS
-B4|Will I have to take anything before [class]?|Yes/No.|DOES_COURSE_HAVE_PREREQS
 B4|What’s the class name of [class]?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|Give me the name of [class].|The title of [class] is [title].|TITLE_OF_COURSE
 B4|What is [class] called?|The title of [class] is [title].|TITLE_OF_COURSE
@@ -130,21 +121,3 @@ B4|How many people can take [class] next quarter?|The enrollment cap for [class]
 B4|What is the enrollment cap for [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|What capacity does [class] have next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|How many people until [class] is full next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
-
-
-[class]: Can be either the the stats course Id or the title of the course
-[term]: Fall, Winter, Spring or Summer quarter
-[professors]: list of professors teaching a specific course
-[sections]: the number of sections offered for the course for the next quarter
-[cap]: the enrollment capacity for the specified course for the next quarter
-[type]: is the course an elective or required course
-[description]: course description for the specified course
-[term(s)]: list of terms that a course is/could be offered
-[topic]: topic that could be taught in a statistics course, i.e. Linear Regression, Probability
-[topics]: list of topics pulled from sentence in the course description following keywords “Topics include”
-[units]: number of units a specified course is
-[times]: days of the week and hours the specified course is being offered
-[day]: day of the week a course is offered
-[classes]: list of prerequisites for the specified class or classes that fit requested parameters
-[id]: id number for the specified class name
-[level]: number representing the level of the class, i.e. 100-level, 200-level
