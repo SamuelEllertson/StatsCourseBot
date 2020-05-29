@@ -56,13 +56,77 @@ class Responder():
 
     def handler_units_of_course(self, params: QueryParameters) -> str:
     
-        params.require_class_id() #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+        params.require_class_id()
 
         course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
     
-        units = self.datastore.get_units_from_class(params.class_id) #Retrieve the number of units
+        return f"{course.full_name()} counts for {course.units} units."
 
-        return f"{course.full_name()} counts for {units} units."
+    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_terms_course_offered(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_description_of_course(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_times_course_offered_next(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_hours_of_course(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_title_of_course(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_course_id_of_course(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_level_of_course(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
+
+    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO
+        return 'Still need to implement'
 
     #Make one for each intent, same function definition for each
 
