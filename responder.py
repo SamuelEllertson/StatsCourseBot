@@ -55,9 +55,14 @@ class Responder():
         return f"The prerequisites for {course.full_name()} are: {course.prereqs}"
 
     def handler_units_of_course(self, params: QueryParameters) -> str:
-        return "units are ___" #placeholder
+    
+        params.require_class_id() #require the presence of variable for a given intent, this corresponds to the [variable] in the query
 
+        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+    
+        units = self.datastore.get_units_from_class(params.class_id) #Retrieve the number of units
 
+        return f"{course.full_name()} counts for {units} units."
 
     #Make one for each intent, same function definition for each
 
