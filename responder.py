@@ -36,12 +36,12 @@ class Responder():
             Intent.FIND_COURSE_ABOUT_TOPIC          :   self.handler_find_course_about_topic,
             Intent.TIMES_COURSE_OFFERED_CURRENT     :   self.handler_times_course_offered_current,
             Intent.TIMES_COURSE_OFFERED_NEXT        :   self.handler_times_course_offered_next,
-            Intent.HOURS_OF_COURSE                  :   self.handler_hourse_of_course,
+            Intent.HOURS_OF_COURSE                  :   self.handler_hours_of_course,
             Intent.TITLE_OF_COURSE                  :   self.handler_title_of_course,
             Intent.COURSE_ID_OF_COURSE              :   self.handler_course_id_of_course,
             Intent.LEVEL_OF_COURSE                  :   self.handler_level_of_course,
-            Intent.ENROLLMENT_CAP_OF_COURSE_CURRENT :   self.enrollment_cap_of_course_current,
-            Intent.ENROLLMENT_CAP_OF_COURSE_NEXT    :   self.enrollment_cap_of_course_next,
+            Intent.ENROLLMENT_CAP_OF_COURSE_CURRENT :   self.handler_enrollment_cap_of_course_current,
+            Intent.ENROLLMENT_CAP_OF_COURSE_NEXT    :   self.handler_enrollment_cap_of_course_next,
            
         }
 
