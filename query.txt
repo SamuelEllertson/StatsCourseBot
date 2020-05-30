@@ -86,7 +86,7 @@ B4|List the classes being taught by [professor] next quarter.|[professor] is tea
 B4|Is [professor] teaching any classes next quarter?|[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
 B4|Give me all the classes [professor] is teaching next quarter.|[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
 B4|What is [professor] teaching next quarter?|[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
-B4|What are my options for taking a class with [professor] next quarter?||[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
+B4|What are my options for taking a class with [professor] next quarter?|[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
 B4|Show me every class taught by [professor] next quarter.|[professor] is teaching [classes] next quarter.|PROFESSOR_COURSES_NEXT
 B4|Is [class] an elective?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Can I take [class] as an elective?|Yes/No.|IS_COURSE_ELECTIVE
@@ -110,7 +110,7 @@ B4|What are the electives for statistics that are being offered this quarter?|[c
 B4|Which courses can be counted as statistics electives this quarter?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|What electives are offered next term?|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
 B4|Which electives are offered next quarter?|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
-B4||List this quarters electives.|[classes] are offered next quarter.|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
+B4|List this quarters electives.|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
 B4|What are the electives courses next term?|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
 B4|What are the stats electives next quarter?|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT
 B4|What are the statistics electives that are being taught next quarter|[classes] are offered next quarter.|ELECTIVES_OFFERED_NEXT

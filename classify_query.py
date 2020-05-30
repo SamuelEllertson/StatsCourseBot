@@ -73,11 +73,11 @@ def main():
             item[1] = re.sub(r"[\.\?]", "", item[1])
             item[2] = re.sub(r"[\.\?]", "", item[2])
             item[3] = re.sub(r'\n', "", item[3]).rstrip()
-            print(item[2])
+            #print(item[2])
             records.append(Record(item[1], item[2], Intent[item[3]]))
         #print(records)
 
-    #validate(records)
+    validate(records)
 
     # args = get_args()
     # datastore = DataStore(args)
@@ -130,24 +130,66 @@ def assist_validation(my_data, model, test):
         vectors.append(new_features)
     return vectors
 
+
+# def split_groups(records, test):
+#     class_counts = []
+#     current_intent = records[0].intent
+#     current_count = 0
+#     for record in records:
+#         if record.intent == current_intent:
+#             current_count += 1
+#         else:
+#             current_intent = record.intent
+#             class_counts.append(current_count)
+#             current_count = 0
+#     class_counts[len(class_counts)-1] += 1
+#     random_nums = []
+#     for i in range(len(class_counts)):
+#         random_nums.append((random.sample(range(class_counts[i]), test), class_counts[i]))
+#     return random_nums
+
     
 def validate(records):
-    # X_train, X_test, y_train, y_test = train_test_split(
-    #     [r.query for r in records],
-    #     [r.answer for r in records],
-    #     train_size=0.7
-    # )
-    random.shuffle(records)
-    split = len(records) // 6
+    train, test, y_train, y_test = train_test_split(
+        [r for r in records],
+        [str(r.intent) for r in records],
+        train_size=0.8,
+        stratify = [str(r.intent) for r in records]
+    )
+    # random.shuffle(records)
+    # split = len(records) // 4
     # print(records)
-    test = records[:split]
-    train = records[split:]
+    # test = records[:split]
+    # train = records[split:]
 
-    X_train = []
-    y_train = []
 
-    X_test = []
-    y_test = []
+    # class_counts = []
+    # train = []
+    # test = []
+
+    # print(X_train)
+    # print(X_test)
+
+    # my_splits = split_groups(records, 2)
+
+    # for record in records:
+    #     current = 0
+    #     for i in range(len(my_splits)):
+
+    # for i in range(len(records)):
+    #     current_count = 0
+    #     if 
+
+
+
+    # print(my_splits)
+
+    
+    # X_train = []
+    # y_train = []
+
+    # X_test = []
+    # y_test = []
 
     args = get_args()
     datastore = DataStore(args)
@@ -156,17 +198,17 @@ def validate(records):
     X_train = assist_validation(train, model, False)
     X_test = assist_validation(test, model, True)
 
-    for trainrecord in train:
-        y_train.append(str(trainrecord.intent))
+    # for trainrecord in train:
+    #     y_train.append(str(trainrecord.intent))
 
-    for testrecord in test:
-        y_test.append(str(testrecord.intent))
+    # for testrecord in test:
+    #     y_test.append(str(testrecord.intent))
 
-            #stratify=[r.answer for r in records]
+    #         #stratify=[r.answer for r in records]
 
-    #model = KNeighborsClassifier(n_neighbors = 1)
-    #model = DecisionTreeClassifier()
-    # model = SVC()
+    # #model = KNeighborsClassifier(n_neighbors = 1)
+    # #model = DecisionTreeClassifier()
+    # # model = SVC()
     model = CatBoostClassifier()
 
     model.fit(X_train, y_train)
@@ -180,8 +222,8 @@ def validate(records):
 
     y_pred = model.predict(X_test)
 
-    # print(y_pred)
-    # print(y_test)
+    # # print(y_pred)
+    # # print(y_test)
 
     print(classification_report(y_test, y_pred))
 
