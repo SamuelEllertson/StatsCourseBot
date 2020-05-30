@@ -2,9 +2,13 @@
 """This class is responsible for dealing with the content of a users message and generating responses."""
 
 from model import Model
-from queryspec import Intent, QueryParameters
+from queryspec import Intent, QueryParameters, MissingFieldException
+from datastore import Course
 
 '''Takes in a message from the user, and uses its model to create a response message'''
+
+class InvalidCourseException(Exception):
+    pass
 
 class Responder():
 
@@ -16,32 +20,32 @@ class Responder():
         self.model.train_model()
 
         self.intent_to_handler = {
-            Intent.UNKNOWN           : self.handler_unknown,
+            Intent.UNKNOWN                          : self.handler_unknown,
 
             Intent.PREREQS_OF_COURSE                : self.handler_prereqs_of_course,
             Intent.UNITS_OF_COURSE                  : self.handler_units_of_course,
-            Intent.COURSE_OFFERED_IN_TERM           :   self.handler_course_offered_in_term,
-            Intent.TERMS_COURSE_OFFERED             :   self.handler_terms_course_offered,
-            Intent.NUMBER_OF_TERMS_COURSE_OFFERED   :   self.handler_number_of_terms_course_offered,
-            Intent.DOES_COURSE_INVOLVE_CODING       :   self.handler_does_course_involve_coding,
-            Intent.WHAT_COURSES_INVOLVE_CODING      :   self.handler_what_courses_involve_coding,
-            Intent.TEACHERS_OF_COURSE_CURRENT       :   self.handler_teachers_of_course_current,
-            Intent.PROFESSOR_COURSES_CURRENT        :   self.handler_professor_courses_current,
-            Intent.TEACHERS_OF_COURSE_NEXT          :   self.handler_teachers_of_course_next,
-            Intent.PROFESSOR_COURSES_NEXT           :   self.handler_professor_courses_next,
-            Intent.IS_COURSE_ELECTIVE               :   self.handler_is_course_elective,
-            Intent.ELECTIVES_OFFERED_CURRENT        :   self.handler_electives_offered_current,
-            Intent.ELECTIVES_OFFERED_NEXT           :   self.handler_electives_offered_next,
-            Intent.DESCRIPTION_OF_COURSE            :   self.handler_description_of_course,
-            Intent.FIND_COURSE_ABOUT_TOPIC          :   self.handler_find_course_about_topic,
-            Intent.TIMES_COURSE_OFFERED_CURRENT     :   self.handler_times_course_offered_current,
-            Intent.TIMES_COURSE_OFFERED_NEXT        :   self.handler_times_course_offered_next,
-            Intent.HOURS_OF_COURSE                  :   self.handler_hours_of_course,
-            Intent.TITLE_OF_COURSE                  :   self.handler_title_of_course,
-            Intent.COURSE_ID_OF_COURSE              :   self.handler_course_id_of_course,
-            Intent.LEVEL_OF_COURSE                  :   self.handler_level_of_course,
-            Intent.ENROLLMENT_CAP_OF_COURSE_CURRENT :   self.handler_enrollment_cap_of_course_current,
-            Intent.ENROLLMENT_CAP_OF_COURSE_NEXT    :   self.handler_enrollment_cap_of_course_next,
+            Intent.COURSE_OFFERED_IN_TERM           : self.handler_course_offered_in_term,
+            Intent.TERMS_COURSE_OFFERED             : self.handler_terms_course_offered,
+            Intent.NUMBER_OF_TERMS_COURSE_OFFERED   : self.handler_number_of_terms_course_offered,
+            Intent.DOES_COURSE_INVOLVE_CODING       : self.handler_does_course_involve_coding,
+            Intent.WHAT_COURSES_INVOLVE_CODING      : self.handler_what_courses_involve_coding,
+            Intent.TEACHERS_OF_COURSE_CURRENT       : self.handler_teachers_of_course_current,
+            Intent.PROFESSOR_COURSES_CURRENT        : self.handler_professor_courses_current,
+            Intent.TEACHERS_OF_COURSE_NEXT          : self.handler_teachers_of_course_next,
+            Intent.PROFESSOR_COURSES_NEXT           : self.handler_professor_courses_next,
+            Intent.IS_COURSE_ELECTIVE               : self.handler_is_course_elective,
+            Intent.ELECTIVES_OFFERED_CURRENT        : self.handler_electives_offered_current,
+            Intent.ELECTIVES_OFFERED_NEXT           : self.handler_electives_offered_next,
+            Intent.DESCRIPTION_OF_COURSE            : self.handler_description_of_course,
+            Intent.FIND_COURSE_ABOUT_TOPIC          : self.handler_find_course_about_topic,
+            Intent.TIMES_COURSE_OFFERED_CURRENT     : self.handler_times_course_offered_current,
+            Intent.TIMES_COURSE_OFFERED_NEXT        : self.handler_times_course_offered_next,
+            Intent.HOURS_OF_COURSE                  : self.handler_hours_of_course,
+            Intent.TITLE_OF_COURSE                  : self.handler_title_of_course,
+            Intent.COURSE_ID_OF_COURSE              : self.handler_course_id_of_course,
+            Intent.LEVEL_OF_COURSE                  : self.handler_level_of_course,
+            Intent.ENROLLMENT_CAP_OF_COURSE_CURRENT : self.handler_enrollment_cap_of_course_current,
+            Intent.ENROLLMENT_CAP_OF_COURSE_NEXT    : self.handler_enrollment_cap_of_course_next,
            
         }
 
@@ -51,10 +55,17 @@ class Responder():
 
         intent, params = self.model.get_intent_and_params(message)
 
+        if self.args.verbose:
+            print(f"intent={intent.name}, params={params}")
+
         try:
             return self.intent_to_handler[intent](params)
-        except AttributeError as e:
+
+        except MissingFieldException as e:
             return self.missing_information_response(intent, params, str(e))
+
+        except InvalidCourseException as e:
+            return self.invalid_course_message(str(e))
 
     # Query handlers 
 
@@ -65,9 +76,11 @@ class Responder():
     #Use this as a model for implementing the rest
     def handler_prereqs_of_course(self, params: QueryParameters) -> str:
 
-        params.require_class_id() #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+        #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+        params.require_class_id() 
 
-        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+        #Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
+        course = self.get_course(params.class_id)
 
         #Special case response since prereqs could be None
         if course.prereqs is None:
@@ -80,7 +93,7 @@ class Responder():
     
         params.require_class_id()
 
-        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+        course = self.get_course(params.class_id)
     
         return f"{course.full_name()} counts for {course.units} units."
 
@@ -159,6 +172,20 @@ class Responder():
 
 
     #Extraneous methods
+
+    def get_course(self, class_id: int) -> Course:
+        '''This is the prefered method to get a course object. It handles the case of
+        an invalid course id'''
+
+        course = self.datastore.get_course_from_id(class_id)
+
+        if course is None:
+            raise InvalidCourseException(str(class_id))
+
+        return course
+
+    def invalid_course_message(self, class_id):
+        return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
 
     def is_signaling_exit(self, message):
         '''returns true if message intends to end the program'''

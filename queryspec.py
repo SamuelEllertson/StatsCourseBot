@@ -43,6 +43,9 @@ class Intent(Enum):
 
     ENROLLMENT_CAP_OF_COURSE_NEXT       = auto()
 
+class MissingFieldException(Exception):
+    pass
+
 class QueryParameters():
 
     def __init__(self, class_id: int = None, term: str = None, professor: str = None, topic: str = None):
@@ -57,16 +60,16 @@ class QueryParameters():
 
     def require_class_id(self):
         if self.class_id is None:
-            raise AttributeError("Class id")
+            raise MissingFieldException("Course id")
 
     def require_term(self):
         if self.term is None:
-            raise AttributeError("Term")
+            raise MissingFieldException("Term")
 
     def require_professor(self):
         if self.professor is None:
-            raise AttributeError("Professor")
+            raise MissingFieldException("Professor")
 
     def require_topic(self):
         if self.topic is None:
-            raise AttributeError("Topic")
+            raise MissingFieldException("Topic")
