@@ -94,6 +94,9 @@ class Section():
             self.current_quarter
         ]
 
+    def full_name(self):
+        return f"STAT {self.id}"
+
     @staticmethod
     def from_db(db_result):
         args = list(db_result)
