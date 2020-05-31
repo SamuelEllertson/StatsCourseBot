@@ -225,6 +225,14 @@ class DataStore():
 
         return set(result for result in split_results)
 
+    def get_classes_with_coding(self) -> Set[str]:
+        """Gets the courses that require coding"""
+        query = "SELECT id FROM course WHERE coding_involved = TRUE"
+
+        results = self.execute_query(query)
+
+        return set(result[0] for result in results)
+
 
     ### Helper methods down here
 
