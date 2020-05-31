@@ -9,6 +9,7 @@ from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
 from difflib import get_close_matches
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 """This is for parsing the intent from a message, as well as extracting the relevant information
@@ -74,6 +75,7 @@ class Model:
             # Add all non-stop words to features with weight of 15
             if word not in stop_words:
                 features[word] = 25
+
         return features
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:

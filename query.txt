@@ -224,11 +224,22 @@ B4|How many people can take [class] this quarter?|The enrollment cap for [class]
 B4|What is the enrollment cap for [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|What capacity does [class] have this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|How many people until [class] is full this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|How many students can enroll in [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|What is the enrollment limit for [class] this term?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|What number of students can enroll is [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|How many spots are open this term for [class]?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|What is the number of open seats this quarter for [class]?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|How big is [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|How many people can take [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|What is the enrollment cap for [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|What capacity does [class] have next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|How many people until [class] is full next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+B4|What is the enrollment limit for [class] next term?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+B4|What number of students can enroll is [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+B4|How many spots are open next term for [class]?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+B4|How many students can enroll in [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+B4|What is the number of open seats next quarter for [class]?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
+
 
 
 

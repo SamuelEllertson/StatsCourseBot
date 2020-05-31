@@ -20,6 +20,7 @@ from sklearn.svm import SVC
 from queryspec import Intent
 import re
 from catboost import CatBoostClassifier
+import pandas as pd
 
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
@@ -222,10 +223,19 @@ def validate(records):
 
     y_pred = model.predict(X_test)
 
-    # # print(y_pred)
-    # # print(y_test)
+    misclassified = np.where(y_test != y_pred)
 
-    print(classification_report(y_test, y_pred))
+
+    y_pred1 = [obs[0] for obs in y_pred]
+    y_test1 = [obs[0] for obs in y_test]
+    # print(y_pred1)
+    # print(y_test)
+    frame = pd.DataFrame(y_test, y_pred)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+
+        print(frame)
+
+    # print(classification_report(y_test, y_pred))
 
     # print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
     # print(
