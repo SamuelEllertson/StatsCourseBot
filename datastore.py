@@ -95,7 +95,7 @@ class Section():
         ]
 
     def full_name(self):
-        return f"STAT {self.id}"
+        return f"STAT {self.course_id}"
 
     @staticmethod
     def from_db(db_result):
