@@ -3,6 +3,7 @@
 
 from model import Model
 from queryspec import Intent, QueryParameters
+from datastore import Course
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
@@ -67,7 +68,8 @@ class Responder():
 
         params.require_class_id() #require the presence of variable for a given intent, this corresponds to the [variable] in the query
 
-        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+        #Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
+        course = self.get_course(params.class_id)
 
         #Special case response since prereqs could be None
         if course.prereqs is None:
@@ -80,7 +82,7 @@ class Responder():
     
         params.require_class_id()
 
-        course = self.datastore.get_course_from_id(params.class_id) #Retrieve the course object
+        course = self.get_course(params.class_id)
     
         return f"{course.full_name()} counts for {course.units} units."
 
@@ -90,11 +92,9 @@ class Responder():
 
         params.require_term()
 
-        course = self.datastore.get_course_from_id(params.class_id)
+        course = self.get_course(params.class_id)
 
-        terms = course.terms.split(",")
-
-        if params.term in terms:
+        if params.term in course.terms:
             return "Yes."
         else:
             return "No."
@@ -103,7 +103,7 @@ class Responder():
 
         params.require_class_id()
 
-        course = self.datastore.get_course_from_id(params.class_id)
+        course = self.get_course(params.class_id)
 
         return f"{course.full_name()} is typically offered {course.terms}."
 
@@ -111,17 +111,17 @@ class Responder():
 
         params.require_class_id()
 
-        course = self.datastore.get_course_from_id(params.class_id)
+        course = self.get_course(params.class_id)
 
         numberOfTerms = len(course.terms.split(","))
 
-        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters.}"
+        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters."
 
     def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO: Improve response messege
 
         params.require_class_id()
 
-        course = self.datastore.get_course_from_id(params.class_id)
+        course = self.get_course(params.class_id)
 
         if course.coding_involved:
             return "Yes."
@@ -195,7 +195,6 @@ class Responder():
     def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
 
-    #Make one for each intent, same function definition for each
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
         '''special handler for when an intent was determined, but the required parameters were missing'''
@@ -204,6 +203,20 @@ class Responder():
 
 
     #Extraneous methods
+
+    def get_course(self, class_id: int) -> Course:
+        '''This is the prefered method to get a course object. It handles the case of
+        an invalid course id'''
+
+        course = self.datastore.get_course_from_id(class_id)
+
+        if course is None:
+            raise InvalidCourseException(str(class_id))
+
+        return course
+
+    def invalid_course_message(self, class_id):
+        return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
 
     def is_signaling_exit(self, message):
         '''returns true if message intends to end the program'''
