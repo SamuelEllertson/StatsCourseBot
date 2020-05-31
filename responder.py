@@ -115,10 +115,18 @@ class Responder():
 
         numberOfTerms = len(course.terms.split(","))
 
-        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters}"
+        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters.}"
 
-    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO: Improve response messege
+
+        params.require_class_id()
+
+        course = self.datastore.get_course_from_id(params.class_id)
+
+        if course.coding_involved:
+            return "Yes."
+        else:
+            return "No."
 
     def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
