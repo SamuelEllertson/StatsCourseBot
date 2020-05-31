@@ -5,6 +5,7 @@ from typing import Tuple, List
 from labeled_data import get_training_data
 import re
 from sklearn.neighbors import KNeighborsClassifier
+from catboost import CatBoostClassifier
 from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
 from difflib import get_close_matches
@@ -25,7 +26,8 @@ class Model:
 
     def train_model(self):
         """Creates and trains a K-nearest-neighbors algorithm on the sample query data."""
-        model = KNeighborsClassifier(n_neighbors=1)
+        # model = KNeighborsClassifier(n_neighbors=1)
+        model = CatBoostClassifier(silent=True)
         # Extract features from test set
         query_intent_map = get_training_data()
         training = query_intent_map.keys()
@@ -169,7 +171,7 @@ class Model:
             if feature in features:
                 features[feature] = vector[feature]
         features = np.array(list(features.values()))
-        return Intent[self.model.predict([features])[0]], params
+        return Intent[self.model.predict(features)[0]], params
 
     def create_query_params(
         self, generalized: str, variables: List[str]

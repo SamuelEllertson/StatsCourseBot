@@ -1,7 +1,7 @@
 #your files here
 db.json
 db_dev.json
-
+catboost_info/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
