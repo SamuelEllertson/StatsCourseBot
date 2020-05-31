@@ -242,7 +242,15 @@ class DataStore():
 
         results = self.execute_query(query, [professor, current_quarter])
 
-        return [Section.from_db(result) for result in results] 
+        return [Section.from_db(result) for result in results]
+
+    def get_electives_by_quarter(self, current_quarter: bool) -> Set[str]:
+        """Gets the electives offered for the current or next term"""
+        query = "SELECT id FROM course INNER JOIN sections ON id = course_id WHERE elective = True AND current_quarter = %s"
+
+        results = self.execute_query(query, [current_quarter])
+
+        return set(result[0] for result in results)
 
     ### Helper methods down here
 

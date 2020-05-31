@@ -187,7 +187,15 @@ class Responder():
         return f"{params.professor} is teaching {classes} this quarter."
 
     def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+
+        params.require_class_id()
+
+        course = self.get_course()
+
+        if course.elective:
+            return "Yes."
+        else:
+            return "No."
 
     def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
