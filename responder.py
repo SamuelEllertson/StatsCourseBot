@@ -186,7 +186,7 @@ class Responder():
 
         return f"{params.professor} is teaching {classes} this quarter."
 
-    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO
+    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO: Improve response messege
 
         params.require_class_id()
 
@@ -197,14 +197,35 @@ class Responder():
         else:
             return "No."
 
-    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+        
+        results = self.get_electives_by_quarter(True)
 
-    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        classes = []
 
-    def handler_description_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        for result in results:
+            classes.append(result)
+
+        return f"{classes} are offered this quarter."
+
+    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+
+        results = self.get_electives_by_quarter(False)
+
+        classes = []
+
+        for result in results:
+            classes.append(result)
+
+        return f"{classes} are offered next quarter."
+
+    def handler_description_of_course(self, params: QueryParameters) -> str: #TODO: Make sure response sounds natural
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"{course.full_name()} is about {course.description}."
 
     def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
@@ -270,6 +291,15 @@ class Responder():
             raise InvalidSectionFromProfessorException(str(professor), bool(current_quarter))
 
         return sections
+
+    def get_electives_by_quarter(self, current_quarter: bool) -> Set[str]:
+
+        results = self.datastore.get_electives_by_quarter(current_quarter)
+
+        if results is None:
+            raise InvalidElectivesByQuarter(bool(current_quarter))
+
+        return results
 
     def invalid_course_message(self, class_id):
         return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
