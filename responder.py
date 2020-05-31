@@ -16,10 +16,10 @@ class Responder():
         self.model.train_model()
 
         self.intent_to_handler = {
-            Intent.UNKNOWN           : self.handler_unknown,
+            Intent.UNKNOWN                          :   self.handler_unknown,
 
-            Intent.PREREQS_OF_COURSE                : self.handler_prereqs_of_course,
-            Intent.UNITS_OF_COURSE                  : self.handler_units_of_course,
+            Intent.PREREQS_OF_COURSE                :   self.handler_prereqs_of_course,
+            Intent.UNITS_OF_COURSE                  :   self.handler_units_of_course,
             Intent.COURSE_OFFERED_IN_TERM           :   self.handler_course_offered_in_term,
             Intent.TERMS_COURSE_OFFERED             :   self.handler_terms_course_offered,
             Intent.NUMBER_OF_TERMS_COURSE_OFFERED   :   self.handler_number_of_terms_course_offered,
@@ -84,14 +84,38 @@ class Responder():
     
         return f"{course.full_name()} counts for {course.units} units."
 
-    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO: Imporve response messege
 
-    def handler_terms_course_offered(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_term()
+
+        course = self.datastore.get_course_from_id(params.class_id)
+
+        terms = course.terms.split(",")
+
+        if params.term in terms:
+            return "Yes."
+        else:
+            return "No."
+
+    def handler_terms_course_offered(self, params: QueryParameters) -> str: #TODO: Clean up course.terms formatting
+
+        params.require_class_id()
+
+        course = self.datastore.get_course_from_id(params.class_id)
+
+        return f"{course.full_name()} is typically offered {course.terms}."
+
+    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: #TODO: Check if quarters should be plural or not
+
+        params.require_class_id()
+
+        course = self.datastore.get_course_from_id(params.class_id)
+
+        numberOfTerms = len(course.terms.split(","))
+
+        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters}"
 
     def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
