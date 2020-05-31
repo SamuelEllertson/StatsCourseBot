@@ -135,7 +135,17 @@ class Responder():
         return f"{classes} require coding."
 
     def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, TRUE)
+
+        professors = []
+
+        for section in sections:
+            professors.append(section.teacher)
+
+        return f"{professors} are teaching {sections[0].full_name()} this quarter."
 
     def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
