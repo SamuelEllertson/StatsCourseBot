@@ -87,7 +87,7 @@ class Responder():
     
         return f"{course.full_name()} counts for {course.units} units."
 
-    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO: Imporve response messege
+    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO: Imporve response message
 
         params.require_class_id()
 
@@ -118,7 +118,7 @@ class Responder():
 
         return f"{course.full_name()} is usually offered in {numberOfTerms} quarters."
 
-    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO: Improve response messege
+    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO: Improve response message
 
         params.require_class_id()
 
@@ -129,7 +129,7 @@ class Responder():
         else:
             return "No."
 
-    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
 
         classes = self.datastore.get_classes_with_coding()
 
@@ -148,7 +148,7 @@ class Responder():
 
         return f"{professors} are teaching {sections[0].full_name()} this quarter."
 
-    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
 
         params.require_professor()
 
@@ -173,7 +173,7 @@ class Responder():
 
         return f"{professors} are teaching {sections[0].full_name()} next quarter."
 
-    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
 
         params.require_professor()
 
@@ -186,7 +186,7 @@ class Responder():
 
         return f"{params.professor} is teaching {classes} this quarter."
 
-    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO: Improve response messege
+    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO: Improve response message
 
         params.require_class_id()
 
@@ -197,7 +197,7 @@ class Responder():
         else:
             return "No."
 
-    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
         
         results = self.get_electives_by_quarter(True)
 
@@ -208,7 +208,7 @@ class Responder():
 
         return f"{classes} are offered this quarter."
 
-    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
 
         results = self.get_electives_by_quarter(False)
 
@@ -227,21 +227,48 @@ class Responder():
 
         return f"{course.full_name()} is about {course.description}."
 
-    def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO
+    def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO: Improve response message
 
         params.require_topic()
 
-        course = self.get_course_about_topic(params.topic)
-        return 'Still need to implement'
+        courses = self.datastore.get_course_about_topic(params.topic)
 
-    def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if len(courses) != 0:
+            return "Yes."
+        else:
+            return "No."
 
-    def handler_times_course_offered_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of course id
+
+        params.require_class_id()
+
+        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+                                                                             
+        times = []
+
+        for section in sections:
+            times.append(section.times_offered)
+
+        return f"{params.id} is offered at {times} each week this quarter."
+
+    def handler_times_course_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of course id
+
+        params.require_class_id()
+
+        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+
+        times = []                                                                                                                                           
+        for section in sections:
+            times.append(section.times_offered)                            
+                                                                                  
+        return f"{params.id} is offered at {times} each week this quarter."
 
     def handler_hours_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"{course.full_name()} meets for {course.units} hours a week."
 
     def handler_title_of_course(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
@@ -304,15 +331,6 @@ class Responder():
             raise InvalidElectivesByQuarter(bool(current_quarter))
 
         return results
-
-    def get_courses_about_topic(self, topic: str) -> List[Course]:
-
-        courses = self.datastore.get_courses_about_topic(topic)
-
-        if courses is None:
-            raise InvalidCourseAboutTopicException(str(topic))
-
-        return courses
 
     def invalid_course_message(self, class_id):
         return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
