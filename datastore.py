@@ -236,6 +236,13 @@ class DataStore():
 
         return set(result[0] for result in results)
 
+    def get_sections_from_professor(self, professor: str, current_quarter: bool) -> List[Section]:
+        """Gets the sections offered from professor for the current or next term"""
+        query = "SELECT * FROM sections WHERE teacher = %s and current_quarter = %s"
+
+        results = self.execute_query(query, [professor, current_quarter])
+
+        return [Section.from_db(result) for result in results] 
 
     ### Helper methods down here
 
