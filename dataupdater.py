@@ -142,7 +142,7 @@ def scrape_sections():
         days = row.find("td", attrs={"class": "courseDays"}).text.strip()
         start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
         end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
-        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text.lower()
         cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
         times_offered = ""
         if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:
@@ -169,7 +169,7 @@ def scrape_sections():
         days = row.find("td", attrs={"class": "courseDays"}).text.strip()
         start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
         end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
-        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text.lower()
         cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
         times_offered = ""
         if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:

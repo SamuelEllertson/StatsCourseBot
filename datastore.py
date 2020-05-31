@@ -238,9 +238,9 @@ class DataStore():
 
     def get_sections_from_professor(self, professor: str, current_quarter: bool) -> List[Section]:
         """Gets the sections offered from professor for the current or next term"""
-        query = "SELECT * FROM sections WHERE teacher = %s and current_quarter = %s"
+        query = "SELECT * FROM sections WHERE teacher like %s and current_quarter = %s"
 
-        results = self.execute_query(query, [professor, current_quarter])
+        results = self.execute_query(query, [professor + ", _", current_quarter])
 
         return [Section.from_db(result) for result in results]
 
@@ -254,9 +254,9 @@ class DataStore():
 
     def get_courses_about_topic(self, topic: str) -> List[Course]:
         """Gets the courses about the provided topic"""
-        query = "SELECt * FROM course WHERE about LIKE '%' + %s + '%' OR title LIKE '%' + %s + '%'"
+        query = "SELECt * FROM course WHERE about LIKE %s OR title LIKE %s"
 
-        results = self.execute_query(query, [topic, topic])
+        results = self.execute_query(query, ["%" + topic + "%", "%" + topic + "%"])
 
         return [Course.from_db(result) for result in results]
 

@@ -77,10 +77,10 @@ class Responder():
     #Use this as a model for implementing the rest
     def handler_prereqs_of_course(self, params: QueryParameters) -> str:
 
-        #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+        # Require the presence of variable for a given intent, this corresponds to the [variable] in the query
         params.require_class_id() 
 
-        #Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
+        # Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
         course = self.get_course(params.class_id)
 
         #Special case response since prereqs could be None
@@ -98,7 +98,7 @@ class Responder():
     
         return f"{course.full_name()} counts for {course.units} units."
 
-    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO: Imporve response message
+    def handler_course_offered_in_term(self, params: QueryParameters) -> str:
 
         params.require_class_id()
 
@@ -107,46 +107,55 @@ class Responder():
         course = self.get_course(params.class_id)
 
         if params.term in course.terms:
-            return "Yes."
+            return f"Yes, STAT {params.class_id} is offered in the {params.term.title()}."
         else:
-            return "No."
+            return f"Sorry, STAT {params.class_id} is not offered in the {params.term.title()}."
 
-    def handler_terms_course_offered(self, params: QueryParameters) -> str: #TODO: Clean up course.terms formatting
-
-        params.require_class_id()
-
-        course = self.get_course(params.class_id)
-
-        return f"{course.full_name()} is typically offered {course.terms}."
-
-    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: #TODO: Check if quarters should be plural or not
+    def handler_terms_course_offered(self, params: QueryParameters) -> str:
 
         params.require_class_id()
 
         course = self.get_course(params.class_id)
 
-        numberOfTerms = len(course.terms.split(","))
+        if list(course.terms)[0] == '':
+            return f"Sorry, {course.full_name()} is not a regularly offered class."
+        if len(course.terms) == 1:
+            return f"{course.full_name()} is typically offered in the {', '.join([t.title() for t in course.terms])}."
+        else:
+            return f"{course.full_name()} is typically offered in the following quarters: {', '.join([t.title() for t in course.terms])}."
 
-        return f"{course.full_name()} is usually offered in {numberOfTerms} quarters."
+    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: 
 
-    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO: Improve response message
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        numberOfTerms = len(course.terms)
+
+        if numberOfTerms == 1:
+             return f"{course.full_name()} is usually offered in {numberOfTerms} quarter."
+        else:
+            return f"{course.full_name()} is usually offered in {numberOfTerms} quarters."
+
+    def handler_does_course_involve_coding(self, params: QueryParameters) -> str:
 
         params.require_class_id()
 
         course = self.get_course(params.class_id)
 
         if course.coding_involved:
-            return "Yes."
+            return f"Yes, STAT {params.class_id} involves coding."
         else:
-            return "No."
+           return f"No, STAT {params.class_id} does not involve coding."
 
-    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
+    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: 
 
         classes = self.datastore.get_classes_with_coding()
+        classes= ["STAT" + str(c) for c in classes]
 
-        return f"{classes} require coding."
+        return f"{', '.join(classes)} require coding."
 
-    def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO: Add and after second to last professor in professor list
+    def handler_teachers_of_course_current(self, params: QueryParameters) -> str:
 
         params.require_class_id()
 
@@ -154,12 +163,24 @@ class Responder():
 
         professors = []
 
+        # Correct formatting and no duplicates
         for section in sections:
-            professors.append(section.teacher)
+            name = section.teacher.split(", ")[0].title()
+            if name not in professors:
+                professors.append(name)
 
-        return f"{professors} are teaching {sections[0].full_name()} this quarter."
+        if len(professors) > 1:
+            professors[len(professors) - 1] = "and " + professors[len(professors) - 1]
 
-    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
+        # Can have 0, 1, or multiple professors teaching a class
+        if len(professors) == 1:
+            return f"Professor {', '.join(professors)} is teaching {sections[0].full_name()} this quarter."
+        elif len(professors) == 0:
+            return f"Sorry, no one is teaching STAT {params.class_id} this quarter."
+        else:
+            return f"Professors {', '.join(professors)} are teaching {sections[0].full_name()} this quarter."
+
+    def handler_professor_courses_current(self, params: QueryParameters) -> str:
 
         params.require_professor()
 
@@ -167,68 +188,113 @@ class Responder():
 
         classes = []
 
+        # Correct formatting and no duplicates
         for section in sections:
-            classes.append(section.course_id)
+            name = section.full_name()
+            if name not in classes:
+                classes.append(name)
 
-        return f"{params.professor} is teaching {classes} this quarter."
+        if len(classes) > 1:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
 
-    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: #TODO: Add and after second to last professor in professor list
+        if len(classes) == 0:
+            return f"Sorry, Professor {params.professor.title()} is not teaching any classes this quarter."
+        elif len(classes) == 2:
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' ' + classes[1]} this quarter."   
+        else:
+            return f"Professor {params.professor.title()} is teaching {', '.join(classes)} this quarter."            
+
+    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: 
 
         params.require_class_id()
 
         sections = self.get_sections_from_id_and_quarter(params.class_id, False)                                                                              
         professors = []
 
+        # Correct formatting and no duplicates
         for section in sections:
-            professors.append(section.teacher)
+            name = section.teacher.split(", ")[0].title()
+            if name not in professors:
+                professors.append(name)
 
-        return f"{professors} are teaching {sections[0].full_name()} next quarter."
+        if len(professors) > 1:
+            professors[len(professors) - 1] = "and " + professors[len(professors) - 1]
 
-    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
+        # Can have 0, 1, or multiple professors teaching a class
+        if len(professors) == 1:
+            return f"Professor {', '.join(professors)} is teaching {sections[0].full_name()} next quarter."
+        elif len(professors) == 0:
+            return f"Sorry, no one is teaching STAT {params.class_id} next quarter."
+        else:
+            return f"Professors {', '.join(professors)} are teaching {sections[0].full_name()} next quarter."
 
+    def handler_professor_courses_next(self, params: QueryParameters) -> str: 
         params.require_professor()
 
         sections = self.get_sections_from_professor(params.professor, False)
 
         classes = []
 
+        # Correct formatting and no duplicates
         for section in sections:
-            classes.append(section.course_id)
+            name = section.full_name()
+            if name not in classes:
+                classes.append(name)
 
-        return f"{params.professor} is teaching {classes} this quarter."
+        if len(classes) > 1:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
 
-    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO: Improve response message
+        if len(classes) == 0:
+            return f"Sorry, Professor {params.professor.title()} is not teaching any classes next quarter."
+        elif len(classes) == 2:
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' ' + classes[1]} next quarter." 
+        else:
+            return f"Professor {params.professor.title()} is teaching {', '.join(classes)} next quarter."            
+
+    def handler_is_course_elective(self, params: QueryParameters) -> str:
 
         params.require_class_id()
 
-        course = self.get_course()
+        course = self.get_course(params.class_id)
 
         if course.elective:
-            return "Yes."
+            return f"Yes, STAT {params.class_id} is an elective."
         else:
-            return "No."
+             return f"No, STAT {params.class_id} is not an elective."
 
-    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
+    def handler_electives_offered_current(self, params: QueryParameters) -> str:
         
         results = self.get_electives_by_quarter(True)
 
         classes = []
 
         for result in results:
-            classes.append(result)
+            classes.append("STAT " + str(result))
 
-        return f"{classes} are offered this quarter."
+        if len(classes) > 1:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
 
-    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response message
+        if len(classes) == 0:
+            return f"Sorry, there are no electives offered this quarter."
+        else:
+            return f"{', '.join(classes)} are all the electives this quarter."
+
+    def handler_electives_offered_next(self, params: QueryParameters) -> str: 
 
         results = self.get_electives_by_quarter(False)
 
         classes = []
 
         for result in results:
-            classes.append(result)
+            classes.append("STAT " + str(result))
 
-        return f"{classes} are offered next quarter."
+        if len(classes) > 1:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+
+        if len(classes) == 0:
+            return f"Sorry, there are no electives offered next quarter."
+        else:
+            return f"{', '.join(classes)} are all the electives offered next quarter."
 
     def handler_description_of_course(self, params: QueryParameters) -> str: #TODO: Make sure response sounds natural
 
@@ -242,12 +308,24 @@ class Responder():
 
         params.require_topic()
 
-        courses = self.datastore.get_course_about_topic(params.topic)
+        courses = self.datastore.get_courses_about_topic(params.topic)
 
-        if len(courses) != 0:
-            return "Yes."
+        classes = [] 
+
+        for course in courses:
+            classes.append(course.full_name())
+
+        if len(classes) > 1:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+
+        if len(classes) == 0:
+            return f"Sorry, there aren't any courses about {params.topic}"
+        elif len(classes) == 1:
+            return f"{', '.join(classes)} is about {params.topic}."
+        elif len(classes) == 2:
+            return f"{classes[0] + ' ' + classes[1]} are about {params.topic}."
         else:
-            return "No."
+            return f"{', '.join(classes)} are about {params.topic}."
 
     def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of course id
 
