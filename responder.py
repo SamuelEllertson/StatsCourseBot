@@ -255,7 +255,7 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+        sections = self.get_sections_from_id_and_quarter(params.class_id, False)
 
         times = []                                                                                                                                           
         for section in sections:
@@ -263,27 +263,56 @@ class Responder():
                                                                                   
         return f"{params.id} is offered at {times} each week this quarter."
 
-    def handler_hours_of_course(self, params: QueryParameters) -> str: #TODO
+    def handler_hours_of_course(self, params: QueryParameters) -> str:
+
         params.require_class_id()
 
         course = self.get_course(params.class_id)
 
         return f"{course.full_name()} meets for {course.units} hours a week."
 
-    def handler_title_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_title_of_course(self, params: QueryParameters) -> str:
 
-    def handler_course_id_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_level_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        course = self.get_course(params.class_id)
 
-    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        return f"The title of {course.full_name()} is {course.title}."
 
-    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_course_id_of_course(self, params: QueryParameters) -> str: #TODO: See if this question is really needed
+
+        params.require_class_id()
+
+        return f"The class number of STAT {params.class_id} is {params.class_id}."
+
+    def handler_level_of_course(self, params: QueryParameters) -> str: #TODO: Verify works correctly
+
+        params.require_class_id()
+
+        return f"The level of STAT {params.class_id} is {str(params.class_id)[0]}00."
+
+    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of class_id
+
+        params.require_class_id()
+
+        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+
+        cap = 0
+        for section in sections:
+            cap += section.enrollment_cap
+
+        return f"The enrollment cap for {params.class_id} this quarter is {cap}."
+
+    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of class_id
+
+        params.require_class_id()
+
+        sections = self.get_sections_from_id_and_quarter(params.class_id, False)
+
+        cap = 0
+        for section in sections:
+            cap += section.enrollment_cap                                                                                                                    
+        return f"The enrollment cap for {params.class_id} next quarter is {cap}."
 
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
