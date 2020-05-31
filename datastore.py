@@ -252,6 +252,14 @@ class DataStore():
 
         return set(result[0] for result in results)
 
+    def get_courses_about_topic(self, topic: str) -> List[Course]:
+        """Gets the courses about the provided topic"""
+        query = "SELECt * FROM course WHERE about LIKE '%' + %s + '%' OR title LIKE '%' + %s + '%'"
+
+        results = self.execute_query(query, [topic, topic])
+
+        return [Course.from_db(result) for result in results]
+
     ### Helper methods down here
 
     def execute_query(self, query: str, arguments: list = None, one_result : bool = False):

@@ -4,7 +4,7 @@
 from model import Model
 from queryspec import Intent, QueryParameters
 from datastore import Course, Section
-from typing import List
+from typing import List, Set
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
@@ -228,6 +228,10 @@ class Responder():
         return f"{course.full_name()} is about {course.description}."
 
     def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO
+
+        params.require_topic()
+
+        course = self.get_course_about_topic(params.topic)
         return 'Still need to implement'
 
     def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO
@@ -300,6 +304,15 @@ class Responder():
             raise InvalidElectivesByQuarter(bool(current_quarter))
 
         return results
+
+    def get_courses_about_topic(self, topic: str) -> List[Course]:
+
+        courses = self.datastore.get_courses_about_topic(topic)
+
+        if courses is None:
+            raise InvalidCourseAboutTopicException(str(topic))
+
+        return courses
 
     def invalid_course_message(self, class_id):
         return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
