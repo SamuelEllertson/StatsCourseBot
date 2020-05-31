@@ -108,13 +108,13 @@ class Model:
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words:
                 j = i + 1
+                topic = ""
                 # Get the entire topic
                 while j < len(tags):
-                    if (
-                        tags[j][0] in stop_words
-                    ):  # you think that this means the intent is finished?
+                    if tags[j][0] in stop_words or j == len(tags) - 1:
+                        vars.append(topic.strip())
                         break
-                    vars.append(tags[j][0].lower())
+                    topic += " " + tags[j][0].lower()
                     j += 1
                 general_query += tags[i][0] + " "
                 general_query += "[topic] "

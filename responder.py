@@ -327,7 +327,7 @@ class Responder():
         else:
             return f"{', '.join(classes)} are about {params.topic}."
 
-    def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of course id
+    def handler_times_course_offered_current(self, params: QueryParameters) -> str: 
 
         params.require_class_id()
 
@@ -339,19 +339,34 @@ class Responder():
             if len(section.times_offered) > 0:
                 times.append(section.times_offered)
 
-        return f"{params.class_id} is offered at {', '.join(times)} each week this quarter."
+        if len(times) > 1:
+            times[len(times) - 1] = "and " + str(times[len(times) - 1])
 
-    def handler_times_course_offered_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of course id
-        params.require_class_id()
+        if len(times) == 0:
+            return f"Sorry, STAT {params.class_id} isn't offered synchronously this quarter. "
+        elif len(times) == 2:
+            return f"STAT {params.class_id} is offered at {times[0] + ' ' + times[1]} each week this quarter."
+        else:
+             return f"STAT {params.class_id} is offered at {', '.join(times)} each week this quarter."
 
+    def handler_times_course_offered_next(self, params: QueryParameters) -> str: 
         sections = self.get_sections_from_id_and_quarter(params.class_id, False)
 
-        times = []                                                                                                                                           
+        times = []
+
         for section in sections:
             if len(section.times_offered) > 0:
-                times.append(section.times_offered)                            
-                                                                                  
-        return f"{params.class_id} is offered at {', '.join(times)} each week this quarter."
+                times.append(section.times_offered)
+
+        if len(times) > 1:
+            times[len(times) - 1] = "and " + str(times[len(times) - 1])
+
+        if len(times) == 0:
+            return f"Sorry, {'STAT' + ' ' + str(params.class_id)} isn't offered synchronously next quarter. "
+        elif len(times) == 2:
+            return f"{'STAT' + ' ' + str(params.class_id)} is offered at {times[0] + ' ' + times[1]} each week next quarter."
+        else:
+             return f"{'STAT' + ' ' + str(params.class_id)} is offered at {', '.join(times)} each week next quarter."
 
     def handler_hours_of_course(self, params: QueryParameters) -> str:
 
@@ -369,8 +384,7 @@ class Responder():
 
         return f"The title of {course.full_name()} is {course.title}."
 
-    def handler_course_id_of_course(self, params: QueryParameters) -> str: #TODO: See if this question is really needed
-
+    def handler_course_id_of_course(self, params: QueryParameters) -> str:
         params.require_class_id()
 
         return f"The class number of STAT {params.class_id} is {params.class_id}."
@@ -381,7 +395,7 @@ class Responder():
 
         return f"The level of STAT {params.class_id} is {str(params.class_id)[0]}00."
 
-    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of class_id
+    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: 
 
         params.require_class_id()
 
@@ -391,9 +405,9 @@ class Responder():
         for section in sections:
             cap += section.enrollment_cap
 
-        return f"The enrollment cap for {params.class_id} this quarter is {cap}."
+        return f"The enrollment cap for STAT {params.class_id} this quarter is {cap}."
 
-    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of class_id
+    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: 
 
         params.require_class_id()
 
@@ -402,7 +416,7 @@ class Responder():
         cap = 0
         for section in sections:
             cap += section.enrollment_cap                                                                                                                    
-        return f"The enrollment cap for {params.class_id} next quarter is {cap}."
+        return f"The enrollment cap for STAT {params.class_id} next quarter is {cap}."
 
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
