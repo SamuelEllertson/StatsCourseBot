@@ -128,8 +128,11 @@ class Responder():
         else:
             return "No."
 
-    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+
+        classes = self.datastore.get_classes_with_coding()
+
+        return f"{classes} require coding."
 
     def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
