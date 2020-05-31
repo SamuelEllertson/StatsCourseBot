@@ -3,7 +3,8 @@
 
 from model import Model
 from queryspec import Intent, QueryParameters
-from datastore import Course
+from datastore import Course, Section
+from typing import List
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
@@ -134,11 +135,11 @@ class Responder():
 
         return f"{classes} require coding."
 
-    def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO
+    def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO: Add and after second to last professor in professor list
 
         params.require_class_id()
 
-        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, TRUE)
+        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
 
         professors = []
 
@@ -147,14 +148,43 @@ class Responder():
 
         return f"{professors} are teaching {sections[0].full_name()} this quarter."
 
-    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
 
-    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_professor()
 
-    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        sections = self.get_sections_from_professor(params.professor, True)
+
+        classes = []
+
+        for section in sections:
+            classes.append(section.course_id)
+
+        return f"{params.professor} is teaching {classes} this quarter."
+
+    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: #TODO: Add and after second to last professor in professor list
+
+        params.require_class_id()
+
+        sections = self.get_sections_from_id_and_quarter(params.class_id, False)                                                                              
+        professors = []
+
+        for section in sections:
+            professors.append(section.teacher)
+
+        return f"{professors} are teaching {sections[0].full_name()} next quarter."
+
+    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO: Add STAT in front of all classes in response messege
+
+        params.require_professor()
+
+        sections = self.get_sections_from_professor(params.professor, False)
+
+        classes = []
+
+        for section in sections:
+            classes.append(section.course_id)
+
+        return f"{params.professor} is teaching {classes} this quarter."
 
     def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO
         return 'Still need to implement'
@@ -214,6 +244,24 @@ class Responder():
             raise InvalidCourseException(str(class_id))
 
         return course
+
+    def get_sections_from_id_and_quarter(self, class_id: int, current_quarter: bool) -> List[Section]:
+
+        sections = self.datastore.get_sections_from_id_and_quarter(class_id, current_quarter)
+
+        if sections is None:
+            raise InvalidSectionFromIdAndQuarterException(str(class_id), bool(current_quarter))
+
+        return sections
+
+    def get_sections_from_professor(self, professor: str, current_quarter: bool) -> List[Section]:
+
+        sections = self.datastore.get_sections_from_professor(professor, current_quarter)
+
+        if sections is None:
+            raise InvalidSectionFromProfessorException(str(professor), bool(current_quarter))
+
+        return sections
 
     def invalid_course_message(self, class_id):
         return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
