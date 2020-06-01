@@ -152,10 +152,10 @@ class Responder():
 
         classes = self.datastore.get_classes_with_coding()
 
-        classes = ["STAT " + str(c) for c in classes]
+        classes = [c.full_name() for c in classes]
 
-        if len(classes) >= 2:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+        if len(classes) > 1:
+            classes[-1] = "and " + str(classes[-1])
 
         return f"{', '.join(classes)} require coding."
 
@@ -174,7 +174,7 @@ class Responder():
                 professors.append(name)
 
         if len(professors) > 1:
-            professors[len(professors) - 1] = "and " + professors[len(professors) - 1]
+            professors[-1] = "and " + professors[-1]
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -198,13 +198,13 @@ class Responder():
             if name not in classes:
                 classes.append(name)
 
-        if len(classes) > 1:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes this quarter."
         elif len(classes) == 2:
-            return f"Professor {params.professor.title()} is teaching {classes[0] + ' ' + classes[1]} this quarter."   
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' and ' + classes[1]} this quarter."   
         else:
             return f"Professor {params.professor.title()} is teaching {', '.join(classes)} this quarter."            
 
@@ -222,7 +222,7 @@ class Responder():
                 professors.append(name)
 
         if len(professors) > 1:
-            professors[len(professors) - 1] = "and " + professors[len(professors) - 1]
+            professors[-1] = "and " + professors[-1]
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -237,21 +237,20 @@ class Responder():
 
         sections = self.get_sections_from_professor(params.professor, False)
 
-        classes = []
+        classes = set()
 
         # Correct formatting and no duplicates
         for section in sections:
             name = section.full_name()
-            if name not in classes:
-                classes.append(name)
+            classes.add(name)
 
-        if len(classes) > 1:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes next quarter."
         elif len(classes) == 2:
-            return f"Professor {params.professor.title()} is teaching {classes[0] + ' ' + classes[1]} next quarter." 
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' and ' + classes[1]} next quarter." 
         else:
             return f"Professor {params.professor.title()} is teaching {', '.join(classes)} next quarter."            
 
@@ -276,7 +275,7 @@ class Responder():
             classes.append("STAT " + str(result))
 
         if len(classes) > 1:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+            classes[-1] = "and " + str(classes[-1])
 
         if len(classes) == 0:
             return f"Sorry, there are no electives offered this quarter."
@@ -293,7 +292,7 @@ class Responder():
             classes.append("STAT " + str(result))
 
         if len(classes) > 1:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+            classes[-1] = "and " + str(classes[-1])
 
         if len(classes) == 0:
             return f"Sorry, there are no electives offered next quarter."
@@ -319,15 +318,15 @@ class Responder():
         for course in courses:
             classes.append(course.full_name())
 
-        if len(classes) > 1:
-            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
 
         if len(classes) == 0:
             return f"Sorry, there aren't any courses about {params.topic}"
         elif len(classes) == 1:
             return f"{', '.join(classes)} is about {params.topic}."
         elif len(classes) == 2:
-            return f"{classes[0] + ' ' + classes[1]} are about {params.topic}."
+            return f"{classes[0] + ' and ' + classes[1]} are about {params.topic}."
         else:
             return f"{', '.join(classes)} are about {params.topic}."
 
@@ -343,8 +342,8 @@ class Responder():
             if len(section.times_offered) > 0:
                 times.append(section.times_offered)
 
-        if len(times) > 1:
-            times[len(times) - 1] = "and " + str(times[len(times) - 1])
+        if len(times) > 2:
+            times[-1] = "and " + str(times[-1])
 
         if len(times) == 0:
             return f"Sorry, {sections[0].full_name()} isn't offered synchronously this quarter. "
@@ -363,13 +362,13 @@ class Responder():
             if len(section.times_offered) > 0:
                 times.append(section.times_offered)
 
-        if len(times) > 1:
-            times[len(times) - 1] = "and " + str(times[len(times) - 1])
+        if len(times) > 2:
+            times[-1] = "and " + str(times[-1])
 
         if len(times) == 0:
             return f"Sorry, {sections[0].full_name()} isn't offered synchronously next quarter. "
         elif len(times) == 2:
-            return f"{sections[0].full_name()} is offered at {times[0] + ' ' + times[1]} each week next quarter."
+            return f"{sections[0].full_name()} is offered at {times[0] + ' and ' + times[1]} each week next quarter."
         else:
              return f"{sections[0].full_name()} is offered at {', '.join(times)} each week next quarter."
 
