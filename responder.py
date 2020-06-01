@@ -152,7 +152,7 @@ class Responder():
 
         classes = self.datastore.get_classes_with_coding()
 
-        classes = [c.full_name() for c in classes]
+        classes = ["STAT " + str(c) for c in classes]
 
         if len(classes) > 1:
             classes[-1] = "and " + str(classes[-1])
@@ -165,16 +165,17 @@ class Responder():
 
         sections = self.get_sections_from_id_and_quarter(params.class_id, True)
 
-        professors = []
+        professors = set()
 
         # Correct formatting and no duplicates
         for section in sections:
             name = section.teacher.split(", ")[0].title()
-            if name not in professors:
-                professors.append(name)
+            professors.add(name)
 
         if len(professors) > 1:
             professors[-1] = "and " + professors[-1]
+
+        professors = list(professors)
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -190,16 +191,17 @@ class Responder():
 
         sections = self.get_sections_from_professor(params.professor, True)
 
-        classes = []
+        classes = set()
 
         # Correct formatting and no duplicates
         for section in sections:
             name = section.full_name()
-            if name not in classes:
-                classes.append(name)
+            classes.add(name)
 
         if len(classes) > 2:
             classes[-1] = "and " + str(classes[-1])
+
+        classes = list(classes)
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes this quarter."
@@ -212,17 +214,19 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, False)                                                                              
-        professors = []
+        sections = self.get_sections_from_id_and_quarter(params.class_id, False)               
+
+        professors = set()
 
         # Correct formatting and no duplicates
         for section in sections:
             name = section.teacher.split(", ")[0].title()
-            if name not in professors:
-                professors.append(name)
+            professors.add(name)
 
         if len(professors) > 1:
             professors[-1] = "and " + professors[-1]
+
+        professors = list(professors)
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -246,6 +250,8 @@ class Responder():
 
         if len(classes) > 2:
             classes[-1] = "and " + str(classes[-1])
+
+        classes = list(classes)
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes next quarter."

@@ -86,27 +86,38 @@ class Model:
         terms = ["summer", "spring", "fall", "winter"]
         teacher_titles = ["professor", "prof", "mr", "mrs"]
         titles = self.datastore.get_course_titles()
+        professor_names = self.datastore.get_professor_names()
         vars = []
         stop_words = set(nltk.corpus.stopwords.words("english"))
-        topic_words = ["on", "about", "covering"]
+        topic_words = ["on", "about", "covering", "cover"]
         i = 0
         # Remove course prefixes, if any
         query = query.replace("STAT", "")
+
         while i < len(tags):
+            # Check for a professor's name, spelled reasonably closely
+            matches = get_close_matches(tags[i][0], professor_names, n=1, cutoff=0.8)
+            if len(matches) > 0:
+                vars.append(matches[0])
+                general_query += "[professor] "
             # Class id found
-            if tags[i][1] == "CD":
+            elif tags[i][1] == "CD":
                 vars.append(tags[i][0])
                 general_query += "[class] "
             # Term name found
             elif tags[i][0].lower() in terms:
                 vars.append(tags[i][0].lower())
                 general_query += "[term] "
-            elif tags[i][0].lower() in teacher_titles:
+            elif (
+                tags[i][0].lower() in teacher_titles
+                and "[professor] " not in general_query
+                and i < len(tags) - 1
+            ):
                 vars.append(tags[i + 1][0].lower())
                 general_query += "[professor] "
                 i += 1
             # Connecting word that introduces a topic found
-            elif tags[i][0] in topic_words:
+            elif tags[i][0] in topic_words and i < len(tags) - 1:
                 j = i + 1
                 topic = ""
                 # Get the entire topic

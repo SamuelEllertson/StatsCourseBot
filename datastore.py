@@ -150,6 +150,15 @@ class DataStore():
         results = self.execute_query(query)
 
         return set(result[0] for result in results)
+
+    def get_professor_names(self) -> set:
+        '''Returns a set of professor names.'''
+        query = "SELECT DISTINCT teacher FROM sections"
+
+        results = self.execute_query(query)
+
+        return set(result[0].split(", ")[0] for result in results)
+
     
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
