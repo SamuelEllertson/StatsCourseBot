@@ -172,10 +172,10 @@ class Responder():
             name = section.teacher.split(", ")[0].title()
             professors.add(name)
 
+        professors = list(professors)
+
         if len(professors) > 1:
             professors[-1] = "and " + professors[-1]
-
-        professors = list(professors)
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -198,10 +198,10 @@ class Responder():
             name = section.full_name()
             classes.add(name)
 
+        classes = list(classes)
+
         if len(classes) > 2:
             classes[-1] = "and " + str(classes[-1])
-
-        classes = list(classes)
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes this quarter."
@@ -223,10 +223,10 @@ class Responder():
             name = section.teacher.split(", ")[0].title()
             professors.add(name)
 
+        professors = list(professors)
+
         if len(professors) > 1:
             professors[-1] = "and " + professors[-1]
-
-        professors = list(professors)
 
         # Can have 0, 1, or multiple professors teaching a class
         if len(professors) == 1:
@@ -248,10 +248,10 @@ class Responder():
             name = section.full_name()
             classes.add(name)
 
+        classes = list(classes)
+
         if len(classes) > 2:
             classes[-1] = "and " + str(classes[-1])
-
-        classes = list(classes)
 
         if len(classes) == 0:
             return f"Sorry, Professor {params.professor.title()} is not teaching any classes next quarter."
