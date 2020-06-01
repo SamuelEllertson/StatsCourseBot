@@ -117,7 +117,7 @@ class Responder():
 
         course = self.get_course(params.class_id)
 
-        if list(course.terms)[0] == '':
+        if len(course.terms) == 0:
             return f"Sorry, {course.full_name()} is not a regularly offered class."
         if len(course.terms) == 1:
             return f"{course.full_name()} is typically offered in the {', '.join([t.title() for t in course.terms])}."
@@ -144,14 +144,18 @@ class Responder():
         course = self.get_course(params.class_id)
 
         if course.coding_involved:
-            return f"Yes, STAT {params.class_id} involves coding."
+            return f"Yes, {course.full_name()} involves coding."
         else:
-           return f"No, STAT {params.class_id} does not involve coding."
+           return f"No, {course.full_name()} does not involve coding."
 
     def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: 
 
         classes = self.datastore.get_classes_with_coding()
-        classes= ["STAT" + str(c) for c in classes]
+
+        classes = ["STAT " + str(c) for c in classes]
+
+        if len(classes) >= 2:
+            classes[len(classes) - 1] = "and " + str(classes[len(classes) - 1])
 
         return f"{', '.join(classes)} require coding."
 
@@ -258,9 +262,9 @@ class Responder():
         course = self.get_course(params.class_id)
 
         if course.elective:
-            return f"Yes, STAT {params.class_id} is an elective."
+            return f"Yes, {course.full_name()} is an elective."
         else:
-             return f"No, STAT {params.class_id} is not an elective."
+             return f"No, {course.full_name()} is not an elective."
 
     def handler_electives_offered_current(self, params: QueryParameters) -> str:
         
@@ -343,13 +347,14 @@ class Responder():
             times[len(times) - 1] = "and " + str(times[len(times) - 1])
 
         if len(times) == 0:
-            return f"Sorry, STAT {params.class_id} isn't offered synchronously this quarter. "
+            return f"Sorry, {sections[0].full_name()} isn't offered synchronously this quarter. "
         elif len(times) == 2:
-            return f"STAT {params.class_id} is offered at {times[0] + ' ' + times[1]} each week this quarter."
+            return f"{sections[0].full_name()} is offered at {times[0] + ' and ' + times[1]} each week this quarter."
         else:
-             return f"STAT {params.class_id} is offered at {', '.join(times)} each week this quarter."
+             return f"{sections[0].full_name()} is offered at {', '.join(times)} each week this quarter."
 
-    def handler_times_course_offered_next(self, params: QueryParameters) -> str: 
+    def handler_times_course_offered_next(self, params: QueryParameters) -> str:
+ 
         sections = self.get_sections_from_id_and_quarter(params.class_id, False)
 
         times = []
@@ -362,11 +367,11 @@ class Responder():
             times[len(times) - 1] = "and " + str(times[len(times) - 1])
 
         if len(times) == 0:
-            return f"Sorry, {'STAT' + ' ' + str(params.class_id)} isn't offered synchronously next quarter. "
+            return f"Sorry, {sections[0].full_name()} isn't offered synchronously next quarter. "
         elif len(times) == 2:
-            return f"{'STAT' + ' ' + str(params.class_id)} is offered at {times[0] + ' ' + times[1]} each week next quarter."
+            return f"{sections[0].full_name()} is offered at {times[0] + ' ' + times[1]} each week next quarter."
         else:
-             return f"{'STAT' + ' ' + str(params.class_id)} is offered at {', '.join(times)} each week next quarter."
+             return f"{sections[0].full_name()} is offered at {', '.join(times)} each week next quarter."
 
     def handler_hours_of_course(self, params: QueryParameters) -> str:
 
@@ -385,15 +390,20 @@ class Responder():
         return f"The title of {course.full_name()} is {course.title}."
 
     def handler_course_id_of_course(self, params: QueryParameters) -> str:
+
         params.require_class_id()
 
-        return f"The class number of STAT {params.class_id} is {params.class_id}."
+        course = self.get_course(params.class_id)
+
+        return f"The class number of {course.full_name()} is {course.id}."
 
     def handler_level_of_course(self, params: QueryParameters) -> str: #TODO: Verify works correctly
 
         params.require_class_id()
 
-        return f"The level of STAT {params.class_id} is {str(params.class_id)[0]}00."
+        course = self.get_course(params.class_id)
+
+        return f"The level of {course.full_name()} is {str(course.id)[0]}00"
 
     def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: 
 
@@ -405,7 +415,7 @@ class Responder():
         for section in sections:
             cap += section.enrollment_cap
 
-        return f"The enrollment cap for STAT {params.class_id} this quarter is {cap}."
+        return f"The enrollment cap for {sections[0].full_name()} this quarter is {cap}."
 
     def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: 
 
@@ -416,7 +426,7 @@ class Responder():
         cap = 0
         for section in sections:
             cap += section.enrollment_cap                                                                                                                    
-        return f"The enrollment cap for STAT {params.class_id} next quarter is {cap}."
+        return f"The enrollment cap for {sections[0].full_name()} next quarter is {cap}."
 
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
