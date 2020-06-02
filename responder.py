@@ -327,6 +327,7 @@ class Responder():
         if len(classes) > 2:
             classes[-1] = "and " + str(classes[-1])
 
+
         if len(classes) == 0:
             return f"Sorry, there aren't any courses about {params.topic}"
         elif len(classes) == 1:

@@ -263,7 +263,7 @@ class DataStore():
 
     def get_electives_by_quarter(self, current_quarter: bool) -> Set[str]:
         """Gets the electives offered for the current or next term"""
-        query = "SELECT id FROM course INNER JOIN sections ON id = course_id WHERE elective = True AND current_quarter = %s"
+        query = "SELECT id FROM course JOIN sections ON id = course_id WHERE elective = True AND current_quarter = %s"
 
         results = self.execute_query(query, [current_quarter])
 
@@ -271,7 +271,7 @@ class DataStore():
 
     def get_courses_about_topic(self, topic: str) -> List[Course]:
         """Gets the courses about the provided topic"""
-        query = "SELECt * FROM course WHERE about LIKE %s OR title LIKE %s"
+        query = "SELECT * FROM course WHERE about LIKE %s OR title LIKE %s"
 
         results = self.execute_query(query, ["%" + topic + "%", "%" + topic + "%"])
 
