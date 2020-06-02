@@ -120,7 +120,7 @@ class Model:
                         general_query += "[class] "
                     j += 1
             # Class id found
-            elif tags[i][1] == "CD" and "[class] " not in general_query:
+            if tags[i][1] == "CD" and "[class] " not in general_query:
                 vars.append(tags[i][0])
                 general_query += "[class] "
                 found_variable = True
