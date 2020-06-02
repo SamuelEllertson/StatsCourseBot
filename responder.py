@@ -163,7 +163,10 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
 
         professors = set()
 
@@ -191,6 +194,9 @@ class Responder():
 
         sections = self.get_sections_from_professor(params.professor, True)
 
+        if len(sections) == 0:
+            return f"Sorry, {params.professor} is not teaching any courses this quarter."
+
         classes = set()
 
         # Correct formatting and no duplicates
@@ -214,7 +220,10 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, False)               
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} next quarter."              
 
         professors = set()
 
@@ -240,6 +249,9 @@ class Responder():
         params.require_professor()
 
         sections = self.get_sections_from_professor(params.professor, False)
+
+        if len(sections) == 0:
+            return f"Sorry, {params.professor} is not teaching any courses this quarter."
 
         classes = set()
 
@@ -273,7 +285,7 @@ class Responder():
 
     def handler_electives_offered_current(self, params: QueryParameters) -> str:
         
-        results = self.get_electives_by_quarter(True)
+        results = self.datastore.get_electives_by_quarter(True)
 
         classes = []
 
@@ -290,7 +302,7 @@ class Responder():
 
     def handler_electives_offered_next(self, params: QueryParameters) -> str: 
 
-        results = self.get_electives_by_quarter(False)
+        results = self.datastore.get_electives_by_quarter(False)
 
         classes = []
 
@@ -341,7 +353,10 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
                                                                              
         times = []
 
@@ -360,8 +375,13 @@ class Responder():
              return f"{sections[0].full_name()} is offered at {', '.join(times)} each week this quarter."
 
     def handler_times_course_offered_next(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
  
-        sections = self.get_sections_from_id_and_quarter(params.class_id, False)
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} next quarter."
 
         times = []
 
@@ -415,7 +435,7 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, True)
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
 
         cap = 0
         for section in sections:
@@ -427,7 +447,7 @@ class Responder():
 
         params.require_class_id()
 
-        sections = self.get_sections_from_id_and_quarter(params.class_id, False)
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
 
         cap = 0
         for section in sections:
@@ -453,33 +473,6 @@ class Responder():
             raise InvalidCourseException(str(class_id))
 
         return course
-
-    def get_sections_from_id_and_quarter(self, class_id: int, current_quarter: bool) -> List[Section]:
-
-        sections = self.datastore.get_sections_from_id_and_quarter(class_id, current_quarter)
-
-        if sections is None:
-            raise InvalidSectionFromIdAndQuarterException(str(class_id), bool(current_quarter))
-
-        return sections
-
-    def get_sections_from_professor(self, professor: str, current_quarter: bool) -> List[Section]:
-
-        sections = self.datastore.get_sections_from_professor(professor, current_quarter)
-
-        if sections is None:
-            raise InvalidSectionFromProfessorException(str(professor), bool(current_quarter))
-
-        return sections
-
-    def get_electives_by_quarter(self, current_quarter: bool) -> Set[str]:
-
-        results = self.datastore.get_electives_by_quarter(current_quarter)
-
-        if results is None:
-            raise InvalidElectivesByQuarter(bool(current_quarter))
-
-        return results
 
     def invalid_course_message(self, class_id):
         return f"I'm sorry, It appears that STAT {class_id} is not a valid class."
