@@ -10,6 +10,8 @@ from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
 from difflib import get_close_matches
 import numpy as np
+from catboost import CatBoostClassifier
+
 
 
 """This is for parsing the intent from a message, as well as extracting the relevant information
@@ -73,8 +75,8 @@ class Model:
         features[words[0]] = 50
         for word in words[1:]:
             # Add all non-stop words to features with weight of 15
-            if word not in stop_words:
-                features[word] = 25
+            # if word not in stop_words:
+            features[word] = 25
         return features
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
