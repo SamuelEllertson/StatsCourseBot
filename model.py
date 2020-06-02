@@ -13,7 +13,6 @@ import numpy as np
 from catboost import CatBoostClassifier
 
 
-
 """This is for parsing the intent from a message, as well as extracting the relevant information
 from a message based on the intent"""
 
@@ -67,6 +66,7 @@ class Model:
             query = query.replace(var[0], "")
 
         # Tokenize, lowercase, and lemmatize all non-variable words
+        query = "".join([c for c in query if c not in string.punctuation])
         words = nltk.word_tokenize(query)
         words = [word.lower() for word in words]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
@@ -82,6 +82,7 @@ class Model:
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
             Returns the generalized form of the query and the list of variables."""
+        query = "".join([c for c in query if c not in string.punctuation])
         tokens = nltk.word_tokenize(query)
         tags = nltk.pos_tag(tokens)
         general_query = ""
@@ -124,13 +125,13 @@ class Model:
                 topic = ""
                 # Get the entire topic
                 while j < len(tags):
-                    if tags[j][0] in stop_words or j == len(tags) - 1:
-                        vars.append(topic.strip())
+                    if tags[j][0] in stop_words:
                         break
                     topic += " " + tags[j][0].lower()
                     j += 1
                 general_query += tags[i][0] + " "
                 general_query += "[topic] "
+                vars.append(topic.strip())
                 i = j - 1
             else:
                 general_query += tags[i][0]
