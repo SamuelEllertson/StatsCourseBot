@@ -129,6 +129,7 @@ class Model:
                 vars.append(tags[i][0].lower())
                 general_query += "[term] "
                 found_variable = True
+            # Professor name found, preceeded by a title
             elif (
                 tags[i][0].lower() in teacher_titles
                 and "[professor] " not in general_query
@@ -181,7 +182,6 @@ class Model:
     ) -> QueryParameters:
         """Creates a QueryParameters object from a generalized query and its variables."""
         var_locations = re.findall(r"(\[(.*?)\])", generalized)
-        print(generalized, variables)
         class_id = None
         term = None
         professor = None
