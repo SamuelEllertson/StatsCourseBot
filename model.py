@@ -69,6 +69,7 @@ class Model:
         # Tokenize, lowercase, and lemmatize all non-variable words
         words = nltk.word_tokenize(query)
         words = [word.lower() for word in words]
+        words = [word for word in words if word not in string.punctuation]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
         # Add first word to features with weight of 50, changes intent drastically.
