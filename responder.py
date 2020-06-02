@@ -311,7 +311,7 @@ class Responder():
 
         course = self.get_course(params.class_id)
 
-        return f"{course.full_name()} is about {course.description}."
+        return f"{course.full_name()} is about {course.about}."
 
     def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO: Improve response message
 

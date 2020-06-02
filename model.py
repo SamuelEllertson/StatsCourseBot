@@ -63,20 +63,20 @@ class Model:
         # First get all the variables out and weight them twice as much as everything else, weight of 100
         variables = re.findall(r"(\[(.*?)\])", query)
         for var in variables:
-            features[var[0]] = 75
+            features[var[0]] = 90
             query = query.replace(var[0], "")
 
-        # Tokenize, lowercase, and lemmatize all non-variable words, then remove all stop words
+        # Tokenize, lowercase, and lemmatize all non-variable words
         words = nltk.word_tokenize(query)
         words = [word.lower() for word in words]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
         # Add first word to features with weight of 50, changes intent drastically.
-        features[words[0]] = 50
+        features[words[0]] = 60
         for word in words[1:]:
             # Add all non-stop words to features with weight of 15
             # if word not in stop_words:
-            features[word] = 25
+            features[word] = 30
         return features
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
@@ -197,7 +197,10 @@ class Model:
         topic = None
         for i in range(len(var_locations)):
             if var_locations[i][0] == "[class]":
-                class_id = int(variables[i])
+                if variables[i].isdigit():
+                    class_id = int(variables[i])
+                else:
+                    class_id = self.datastore.get_id_of_class(variables[i])
             elif var_locations[i][0] == "[term]":
                 term = variables[i]
             if var_locations[i][0] == "[professor]":

@@ -203,6 +203,14 @@ class DataStore():
 
         return results[0]
 
+    def get_id_of_class(self, course_title: int) -> str:
+        """Gets the title of a given class"""   
+        query = "SELECT id FROM course WHERE title = %s"     
+
+        results = self.execute_query(query, [course_title], one_result=True)
+
+        return int(results[0])
+
     def get_about_of_class(self, course_id: int) -> str:
         """Gets the description of a given class"""   
         query = "SELECT about FROM course WHERE id = %s"     
