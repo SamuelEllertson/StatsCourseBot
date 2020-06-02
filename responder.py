@@ -165,7 +165,7 @@ class Responder():
 
         sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
 
         professors = set()
@@ -194,7 +194,7 @@ class Responder():
 
         sections = self.get_sections_from_professor(params.professor, True)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, {params.professor} is not teaching any courses this quarter."
 
         classes = set()
@@ -222,7 +222,7 @@ class Responder():
 
         sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, there are no sections of STAT {params.class_id} next quarter."              
 
         professors = set()
@@ -250,7 +250,7 @@ class Responder():
 
         sections = self.get_sections_from_professor(params.professor, False)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, {params.professor} is not teaching any courses this quarter."
 
         classes = set()
@@ -354,7 +354,7 @@ class Responder():
 
         sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
                                                                              
         times = []
@@ -379,7 +379,7 @@ class Responder():
  
         sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
 
-        if sections == None:
+        if len(sections) == 0:
             return f"Sorry, there are no sections of STAT {params.class_id} next quarter."
 
         times = []
