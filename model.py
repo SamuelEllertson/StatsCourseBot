@@ -4,13 +4,11 @@ import string
 from typing import Tuple, List
 from labeled_data import get_training_data
 import re
-from sklearn.neighbors import KNeighborsClassifier
 from catboost import CatBoostClassifier
 from nltk.stem import WordNetLemmatizer
 from typing import Tuple, List
 from difflib import get_close_matches
 import numpy as np
-from catboost import CatBoostClassifier
 
 
 """This is for parsing the intent from a message, as well as extracting the relevant information
@@ -26,8 +24,7 @@ class Model:
         self.feature_vector = {}
 
     def train_model(self):
-        """Creates and trains a K-nearest-neighbors algorithm on the sample query data."""
-        # model = KNeighborsClassifier(n_neighbors=1)
+        """Creates and trains a CatBoost algorithm on the sample query data."""
         model = CatBoostClassifier(silent=True)
         # Extract features from test set
         query_intent_map = get_training_data()
@@ -83,34 +80,54 @@ class Model:
         """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
             Returns the generalized form of the query and the list of variables."""
         query = "".join([c for c in query if c not in string.punctuation])
-        tokens = nltk.word_tokenize(query)
-        tags = nltk.pos_tag(tokens)
-        general_query = ""
+        tags = nltk.pos_tag(nltk.word_tokenize(query))
+        stop_words = set(nltk.corpus.stopwords.words("english"))
+        topic_words = ["on", "about", "covering", "cover"]
         terms = ["summer", "spring", "fall", "winter"]
         teacher_titles = ["professor", "prof", "mr", "mrs"]
         titles = self.datastore.get_course_titles()
         professor_names = self.datastore.get_professor_names()
-        vars = []
-        stop_words = set(nltk.corpus.stopwords.words("english"))
-        topic_words = ["on", "about", "covering", "cover"]
-        i = 0
         # Remove course prefixes, if any
         query = query.replace("STAT", "")
+        vars = []
+        general_query = ""
 
+        i = 0
+        found_title = False
         while i < len(tags):
+            found_variable = False
             # Check for a professor's name, spelled reasonably closely
             matches = get_close_matches(tags[i][0], professor_names, n=1, cutoff=0.8)
             if len(matches) > 0:
                 vars.append(matches[0])
                 general_query += "[professor] "
+                found_variable = True
+            # Use a sliding window to check every subsequence for a possible class title
+            if not found_title:
+                j = 0
+                while j < i:
+                    # Only match to a course title if the phrase is very close
+                    phrase = " ".join([t[0].capitalize() for t in tags[j : i + 1]])
+                    matches = get_close_matches(phrase, titles, n=1, cutoff=0.9)
+                    if len(matches) > 0:
+                        found_title = True
+                        found_variable = True
+                        vars.append(matches[0])
+                        general_query = general_query.replace(
+                            " ".join([t[0] for t in tags[j:i]]), ""
+                        )
+                        general_query += "[class] "
+                    j += 1
             # Class id found
-            elif tags[i][1] == "CD":
+            elif tags[i][1] == "CD" and "[class] " not in general_query:
                 vars.append(tags[i][0])
                 general_query += "[class] "
+                found_variable = True
             # Term name found
             elif tags[i][0].lower() in terms:
                 vars.append(tags[i][0].lower())
                 general_query += "[term] "
+                found_variable = True
             elif (
                 tags[i][0].lower() in teacher_titles
                 and "[professor] " not in general_query
@@ -118,6 +135,7 @@ class Model:
             ):
                 vars.append(tags[i + 1][0].lower())
                 general_query += "[professor] "
+                found_variable = True
                 i += 1
             # Connecting word that introduces a topic found
             elif tags[i][0] in topic_words and i < len(tags) - 1:
@@ -133,42 +151,12 @@ class Model:
                 general_query += "[topic] "
                 vars.append(topic.strip())
                 i = j - 1
-            else:
+                found_variable = True
+
+            if not found_variable:
                 general_query += tags[i][0]
                 general_query += " "
             i += 1
-        # Didn't find any variables first pass, now look for titles of classes.
-        if len(vars) == 0:
-            i = 0
-            j = 0
-            # Use a sliding window to check every subsequence for a possible class title
-            while i < len(tags):
-                while j < i:
-                    # Only match to a course title if the phrase is very close
-                    phrase = " ".join([t[0].capitalize() for t in tags[j : i + 1]])
-                    matches = get_close_matches(phrase, titles, n=1, cutoff=0.8)
-                    if len(matches) > 0:
-                        vars.append(matches[0])
-                        first = True
-                        # Replace the first word in the title with a variable, remove the rest
-                        for word in matches[0].split(" "):
-                            if first:
-                                general_query = general_query.replace(word, "[class]")
-                                general_query = general_query.replace(
-                                    word.lower(), "[class]"
-                                )
-                                first = False
-                            else:
-                                general_query = general_query.replace(word, "")
-                                general_query = general_query.replace(word.lower(), "")
-                        # print(
-                        #     re.sub(" +", " ", general_query.strip()) + ": " + str(vars)
-                        # )
-                        return re.sub(" +", " ", general_query.strip()), vars
-                    j += 1
-                i += 1
-                j = 0
-        # print(re.sub(" +", " ", general_query.strip()) + ": " + str(vars))
         return re.sub(" +", " ", general_query.strip()), vars
 
     def get_intent_and_params(self, message: str) -> Tuple[Intent, QueryParameters]:
@@ -192,6 +180,7 @@ class Model:
     ) -> QueryParameters:
         """Creates a QueryParameters object from a generalized query and its variables."""
         var_locations = re.findall(r"(\[(.*?)\])", generalized)
+        print(generalized, variables)
         class_id = None
         term = None
         professor = None
