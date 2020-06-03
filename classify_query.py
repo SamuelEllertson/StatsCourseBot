@@ -84,6 +84,7 @@ def main():
     #punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
     manip_queries()
     documents = []
+    records = []
     with open("merged_queries.txt") as fd:
         lines = fd.readlines()
         #print(lines)
@@ -93,20 +94,24 @@ def main():
         for item in items:
             documents.append(item[0])
         #items = [i for i in items if i[0] == "B4"]
-        # for item in items:
-        #     words = item[1].split(" ")
-        #     item[0] = re.sub(r"[\.\?]", "", item[0])
-        #     #item[2] = re.sub(r"[\.\?]", "", item[2])
-        #     item[1] = re.sub(r'\n', "", item[1]).rstrip()
-        #     #print(item[2])
-        #     records.append(Record(item[0], Intent[item[1]]))
+    with open("query.txt") as f:
+        lines = f.readlines()
+        items = [x.split("|") for x in lines]
+        for item in items:
+            words = item[1].split(" ")
+            item[1] = re.sub(r"[\.\?]", "", item[1])
+            #item[2] = re.sub(r"[\.\?]", "", item[2])
+            item[3] = re.sub(r'\n', "", item[3]).rstrip()
+            #print(item[2])
+            records.append(Record(item[1], Intent[item[3]]))
+    #print(records)
         #print(records)
     #print(documents)
-    # validate(records)
+
     tfidf = TfidfVectorizer(stop_words = stop_words)
     tfidf.fit(documents)
 
-
+    validate(records, tfidf)
     # args = get_args()
     # datastore = DataStore(args)
     # model = Model(args, datastore, None)
@@ -132,31 +137,31 @@ def main():
 
 
 def assist_validation(my_data, model, test):
-    features = [model.get_features(r.query) for r in my_data]
+    feature_vectors = [model.get_features(r.query) for r in my_data]
     #print(features)
-    vectors = []
+    #vectors = []
     # Get a corpus of every feature in the training set
-    if test == False:
-        for extracted in features:
-            for feature in extracted:
-                if feature not in model.feature_vector:
-                    model.feature_vector[feature] = 0
-    #print(model.feature_vector)
+    # if test == False:
+    #     for extracted in features:
+    #         for feature in extracted:
+    #             if feature not in model.feature_vector:
+    #                 model.feature_vector[feature] = 0
+    # #print(model.feature_vector)
 
-    #print(self.feature_vector)
-    #print(features)
-    # Create a feature vector from the entire corpus for each training record
-    for vector in features:
-        new_features = dict.fromkeys(model.feature_vector, 0)
-        for feature in vector.keys():
-            #print(new_features.keys())
-            if feature in new_features.keys():
-                #print(feature)
-                new_features[feature] = vector[feature]
-        # Convert to values only
-        new_features = np.array(list(new_features.values()))
-        vectors.append(new_features)
-    return vectors
+    # #print(self.feature_vector)
+    # #print(features)
+    # # Create a feature vector from the entire corpus for each training record
+    # for vector in features:
+    #     new_features = dict.fromkeys(model.feature_vector, 0)
+    #     for feature in vector.keys():
+    #         #print(new_features.keys())
+    #         if feature in new_features.keys():
+    #             #print(feature)
+    #             new_features[feature] = vector[feature]
+    #     # Convert to values only
+    #     new_features = np.array(list(new_features.values()))
+    #     vectors.append(new_features)
+    return feature_vectors
 
 
 # def split_groups(records, test):
@@ -177,9 +182,14 @@ def assist_validation(my_data, model, test):
 #     return random_nums
 
     
-def validate(records):
-    train, test, y_train, y_test = train_test_split(
-        [r for r in records],
+def validate(records, tfidf):
+
+    args = get_args()
+    datastore = DataStore(args)
+    model = Model(args, datastore, None)
+    data = tfidf.transform([r.query for r in records])
+    X_train, X_test, y_train, y_test = train_test_split(
+        data,
         [str(r.intent) for r in records],
         train_size=0.8,
         stratify = [str(r.intent) for r in records]
@@ -219,12 +229,12 @@ def validate(records):
     # X_test = []
     # y_test = []
 
-    args = get_args()
-    datastore = DataStore(args)
-    model = Model(args, datastore, None)
+    # args = get_args()
+    # datastore = DataStore(args)
+    # model = Model(args, datastore, None)
 
-    X_train = assist_validation(train, model, False)
-    X_test = assist_validation(test, model, True)
+    # X_train = assist_validation(train, model, False)
+    # X_test = assist_validation(test, model, True)
 
     # for trainrecord in train:
     #     y_train.append(str(trainrecord.intent))
@@ -258,11 +268,11 @@ def validate(records):
     # print(y_pred1)
     # print(y_test)
     frame = pd.DataFrame(y_test, y_pred)
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
 
-        print(frame)
+    #     print(frame)
 
-    # print(classification_report(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
 
     # print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
     # print(
