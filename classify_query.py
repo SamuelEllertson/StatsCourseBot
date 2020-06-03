@@ -21,7 +21,7 @@ from queryspec import Intent
 import re
 from catboost import CatBoostClassifier
 import pandas as pd
-
+from nltk.stem import WordNetLemmatizer
 
 """This file is an experimental file for ML classification and query parsing. It is not intended to be used as production code."""
 
@@ -82,17 +82,24 @@ def main():
     # nltk.download("tagsets")
     # nltk.download("punkt")
     #punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
+    args = get_args()
+    datastore = DataStore(args)
+    model = Model(args, datastore, None)
     manip_queries()
     documents = []
     records = []
+    wordnet_lemmatizer = WordNetLemmatizer()
     with open("merged_queries.txt") as fd:
         lines = fd.readlines()
-        #print(lines)
-        #lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
-        #print(lines)
         items = [x.split("|") for x in lines]
         for item in items:
-            documents.append(item[0])
+            words = "".join(
+                [c for c in item[0].strip() if c not in string.punctuation]
+            )
+            words = nltk.word_tokenize(words)
+            words = [word.lower() for word in words]
+            words = [wordnet_lemmatizer.lemmatize(w) for w in words]
+            documents.append(" ".join(words))
         #items = [i for i in items if i[0] == "B4"]
     with open("query.txt") as f:
         lines = f.readlines()
@@ -108,10 +115,10 @@ def main():
         #print(records)
     #print(documents)
 
-    tfidf = TfidfVectorizer(stop_words = stop_words)
-    tfidf.fit(documents)
+    #tfidf = TfidfVectorizer(stop_words = stop_words)
+    model.tfidf.fit(documents)
 
-    validate(records, tfidf)
+    validate(records, model)
     # args = get_args()
     # datastore = DataStore(args)
     # model = Model(args, datastore, None)
@@ -182,12 +189,13 @@ def assist_validation(my_data, model, test):
 #     return random_nums
 
     
-def validate(records, tfidf):
+def validate(records, model):
 
-    args = get_args()
-    datastore = DataStore(args)
-    model = Model(args, datastore, None)
-    data = tfidf.transform([r.query for r in records])
+ 
+    data = []
+    for obs in records:
+        data.append(model.get_features(obs.query).toarray()[0])
+    # print(data)
     X_train, X_test, y_train, y_test = train_test_split(
         data,
         [str(r.intent) for r in records],
@@ -247,7 +255,7 @@ def validate(records, tfidf):
     # #model = KNeighborsClassifier(n_neighbors = 1)
     # #model = DecisionTreeClassifier()
     # # model = SVC()
-    model = CatBoostClassifier()
+    model = CatBoostClassifier(iterations = 2000)
 
     model.fit(X_train, y_train)
 
