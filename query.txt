@@ -12,10 +12,10 @@ B4|When can I next take [class]?|[class] is typically offered [term(s)].|TERMS_C
 B4|When is [class] being offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When is [class] available?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When can I take [class]?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|What term(s) is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|Which quarter(s) is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|What quarter(s) is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|Which term(s) is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|What term is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|Which quarters is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|What quarters is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|Which term is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When is [class] being taught at Cal Poly?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When does the statistics department offer [class]?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|How many quarters is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.|NUMBER_OF_TERMS_COURSE_OFFERED
