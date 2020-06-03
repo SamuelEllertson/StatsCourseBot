@@ -22,26 +22,26 @@ class Model:
         self.args = args
         self.datastore = datastore
         self.iohandler = iohandler
-        self.model = None
-        self.tfidf = None
+        self.model = CatBoostClassifier(silent=True)
+        self.tfidf = TfidfVectorizer(tokenizer=str.split)
 
         if args.new_model:
-            self.model = CatBoostClassifier(silent=True)
-            self.tfidf = TfidfVectorizer(tokenizer=str.split)
             self.train_model()
             self.save_model()
         else:
             self.load_model()
 
     def save_model(self):
-        with open("model/model", "wb") as out_model, open("model/tfidf", "wb") as out_tfidf:
-            pickle.dump(self.model, out_model)
+        with open("model/tfidf", "wb") as out_tfidf:
             pickle.dump(self.tfidf, out_tfidf)
 
+        self.model.save_model("model/model")
+
     def load_model(self):
-        with open("model/model", "rb") as in_model, open("model/tfidf", "rb") as in_tfidf:
-            self.model = pickle.load(in_model)
+        with open("model/tfidf", "rb") as in_tfidf:
             self.tfidf = pickle.load(in_tfidf)
+
+        self.model.load_model("model/model")
 
     def train_model(self):
         """Creates and trains a CatBoost algorithm on the sample query data."""
