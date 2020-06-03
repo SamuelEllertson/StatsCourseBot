@@ -41,7 +41,7 @@ class Course():
         self.terms = terms
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.as_list()})"
+        return f"{self.__class__.__name__}({self.as_list()[:-1]},{self.terms})"
 
     def full_name(self):
         return f"STAT {self.id}"
@@ -68,7 +68,7 @@ class Course():
         args[6] = bool(args[6])
 
         #convert comma seperated string to real set
-        args[7] = set(args[7].split(","))
+        args[7] = set(args[7].split(",")) if args[7] != "" else set()
 
         return Course(*args)
 

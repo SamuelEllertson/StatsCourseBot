@@ -49,6 +49,7 @@ B4|What classes do I need a computer for?|[classes] require coding.|WHAT_COURSES
 B4|If I want to code, what classes can I take?|[classes] require coding.|WHAT_COURSES_INVOLVE_CODING
 B4|What statistics courses involve programming?|[classes] require coding.|WHAT_COURSES_INVOLVE_CODING
 B4|Who is teaching [class] this quarter?|[professors] are teaching [class] this quarter.|TEACHERS_OF_COURSE_CURRENT
+B4|Who is teaching [class]?|[professors] are teaching [class] this quarter.|TEACHERS_OF_COURSE_CURRENT
 B4|What professors are teaching [class] this quarter?|[professors] are teaching [class] this quarter.|TEACHERS_OF_COURSE_CURRENT
 B4|What teachers are offering [class] this quarter?|[professors] are teaching [class] this quarter.|TEACHERS_OF_COURSE_CURRENT
 B4|Who can I take [class] with this quarter?|[professors] are teaching [class] this quarter.|TEACHERS_OF_COURSE_CURRENT
@@ -99,6 +100,7 @@ B4|Is it required for me to take [class]?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Is it necessary to take [class] for me to graduate?|Yes/No.|IS_COURSE_ELECTIVE
 B4|Does [class] count towards my major?|Yes/No.|IS_COURSE_ELECTIVE
 B4|What electives are offered this term?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
+B4|What are the stat electives?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|Which electives are offered this quarter?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|What are the stat electives for this quarter?|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
 B4|List this quarters electives.|[classes] are offered this quarter.|ELECTIVES_OFFERED_CURRENT
@@ -139,6 +141,7 @@ B4|Are there any statistics courses on [topic]?|Yes/No.|FIND_COURSE_ABOUT_TOPIC
 B4|Does the statistics department offer courses on [topic]?|Yes/No.|FIND_COURSE_ABOUT_TOPIC
 B4|What courses does that statistics department offer on [topic]?|Yes/No.|FIND_COURSE_ABOUT_TOPIC
 B4|When does [class] meet this quarter?|[class] is offered at [times] each week this quarter.|TIMES_COURSE_OFFERED_CURRENT
+B4|When does [class] meet?|[class] is offered at [times] each week this quarter.|TIMES_COURSE_OFFERED_CURRENT
 B4|What times is [class] offered this quarter?|[class] is offered at [times] each week this quarter.|TIMES_COURSE_OFFERED_CURRENT
 B4|Which days does [class] meet this quarter?|[class] is offered at [times] each week this quarter.|TIMES_COURSE_OFFERED_CURRENT
 B4|When do I need to go to [class] this quarter?|[class] is offered at [times] each week this quarter.|TIMES_COURSE_OFFERED_CURRENT
@@ -189,7 +192,10 @@ B4|Name the prerequisites of [class].|The prerequisites for [class] are [classes
 B4|Name the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|Give me the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|How many prereqs does [class] have?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
+<<<<<<< HEAD
 B4|If I want to take [class], what do I need to take?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
+=======
+>>>>>>> 80b856875eb44be79d39b8241f9dcbb462cbaac2
 B4|What’s the class name of [class]?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|Give me the name of [class].|The title of [class] is [title].|TITLE_OF_COURSE
 B4|What is [class] called?|The title of [class] is [title].|TITLE_OF_COURSE
@@ -223,6 +229,7 @@ B4|Tell me the division of [class].|[class] is level [level].|LEVEL_OF_COURSE
 B4|How big is [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|How many people can take [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|What is the enrollment cap for [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
+B4|What is the enrollment cap for [class]?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|What capacity does [class] have this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|How many people until [class] is full this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
 B4|How many students can enroll in [class] this quarter?|The enrollment cap for [class] this quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_CURRENT
