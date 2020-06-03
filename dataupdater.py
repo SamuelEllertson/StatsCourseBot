@@ -66,13 +66,15 @@ def scrape_courses():
             .replace("\n", "")
         )
         coding_involved = False
-        if "software" in desc:
-            coding_involved = True
         for i in range(len(prereqs_raw)):
             if prereqs_raw[i].endswith("Prerequisite:") or prereqs_raw[i].endswith("Corequisite:"):
                 prereqs = " ".join(prereqs_raw[i + 1:])
-            if prereqs_raw[i].endswith("Reccomended:"):
+            if prereqs_raw[i].endswith("Recommended:"):
                 reccomended = " ".join(prereqs_raw[i:])
+        if "software" in desc or "csc" in prereqs.lower() or "331" in prereqs.lower() \
+         or "330" in prereqs.lower() or "cpe" in prereqs.lower() or "programming" in title.lower() or \
+         "programming" in desc.lower() or "computing" in title.lower() or "computing" in desc.lower():
+            coding_involved = True
 
         courses.append(
             Course(int(id), prereqs, units, title, desc, coding_involved, False, {})
@@ -142,7 +144,7 @@ def scrape_sections():
         days = row.find("td", attrs={"class": "courseDays"}).text.strip()
         start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
         end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
-        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text.lower()
         cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
         times_offered = ""
         if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:
@@ -169,7 +171,7 @@ def scrape_sections():
         days = row.find("td", attrs={"class": "courseDays"}).text.strip()
         start_time = row.find("td", attrs={"class": "startTime"}).text.strip()
         end_time = row.find("td", attrs={"class": "endTime"}).text.strip()
-        teacher = row.find("td", attrs={"class": "personName"}).find("a").text
+        teacher = row.find("td", attrs={"class": "personName"}).find("a").text.lower()
         cap = int(row.find_all("td", attrs={"class": "count"})[1].text)
         times_offered = ""
         if len(days) > 0 and len(start_time) > 0 and len(end_time) > 0:

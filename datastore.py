@@ -32,13 +32,19 @@ intended for use elsewhere in the code
 class Course():
     def __init__(self, id : int, prereqs : str, units : str, title : str, about : str, coding_involved : bool, elective : bool, terms : set):
         self.id = id
-        self.prereqs = prereqs
+        self.prereqs = prereqs or None
         self.units = units
         self.title = title
         self.about = about
         self.coding_involved = coding_involved
         self.elective = elective
         self.terms = terms
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.as_list()[:-1]},{self.terms})"
+
+    def full_name(self):
+        return f"STAT {self.id}"
 
     def as_list(self):
         return [
@@ -62,7 +68,7 @@ class Course():
         args[6] = bool(args[6])
 
         #convert comma seperated string to real set
-        args[7] = set(args[7].split(","))
+        args[7] = set(args[7].split(",")) if args[7] != "" else set()
 
         return Course(*args)
 
@@ -75,6 +81,9 @@ class Section():
         self.teacher = teacher
         self.current_quarter = current_quarter
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.as_list()})"
+
     def as_list(self):
         return [
             self.course_id,
@@ -84,6 +93,9 @@ class Section():
             self.teacher,
             self.current_quarter
         ]
+
+    def full_name(self):
+        return f"STAT {self.course_id}"
 
     @staticmethod
     def from_db(db_result):
@@ -138,6 +150,15 @@ class DataStore():
         results = self.execute_query(query)
 
         return set(result[0] for result in results)
+
+    def get_professor_names(self) -> set:
+        '''Returns a set of professor names.'''
+        query = "SELECT DISTINCT teacher FROM sections"
+
+        results = self.execute_query(query)
+
+        return set(result[0].split(", ")[0] for result in results)
+
     
     def get_course_from_id(self, id: int) -> Course:
         '''Returns a course object from its course_id, or None if that id doesnt exist'''
@@ -182,6 +203,14 @@ class DataStore():
 
         return results[0]
 
+    def get_id_of_class(self, course_title: int) -> str:
+        """Gets the title of a given class"""   
+        query = "SELECT id FROM course WHERE title = %s"     
+
+        results = self.execute_query(query, [course_title], one_result=True)
+
+        return int(results[0])
+
     def get_about_of_class(self, course_id: int) -> str:
         """Gets the description of a given class"""   
         query = "SELECT about FROM course WHERE id = %s"     
@@ -216,6 +245,37 @@ class DataStore():
 
         return set(result for result in split_results)
 
+    def get_classes_with_coding(self) -> Set[str]:
+        """Gets the courses that require coding"""
+        query = "SELECT id FROM course WHERE coding_involved = TRUE"
+
+        results = self.execute_query(query)
+
+        return set(result[0] for result in results)
+
+    def get_sections_from_professor(self, professor: str, current_quarter: bool) -> List[Section]:
+        """Gets the sections offered from professor for the current or next term"""
+        query = "SELECT * FROM sections WHERE teacher like %s and current_quarter = %s"
+
+        results = self.execute_query(query, [professor + ", _", current_quarter])
+
+        return [Section.from_db(result) for result in results]
+
+    def get_electives_by_quarter(self, current_quarter: bool) -> Set[str]:
+        """Gets the electives offered for the current or next term"""
+        query = "SELECT id FROM course JOIN sections ON id = course_id WHERE elective = True AND current_quarter = %s"
+
+        results = self.execute_query(query, [current_quarter])
+
+        return set(result[0] for result in results)
+
+    def get_courses_about_topic(self, topic: str) -> List[Course]:
+        """Gets the courses about the provided topic"""
+        query = "SELECT * FROM course WHERE about LIKE %s OR title LIKE %s"
+
+        results = self.execute_query(query, ["%" + topic + "%", "%" + topic + "%"])
+
+        return [Course.from_db(result) for result in results]
 
     ### Helper methods down here
 

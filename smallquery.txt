@@ -1,0 +1,39 @@
+B4|Is [class] being offered in [term]?|Yes/No.
+B4|Can I take [class] in [term]?|Yes/No.
+B4|Will [class] be available in [term]?|Yes/No.
+B4|When can I next take [class]?|[class] is typically offered [term(s)].
+B4|When is [class] being offered?|[class] is typically offered [term(s)].
+B4|When is [class] available?|[class] is typically offered [term(s)].
+B4|When can I take [class]?|[class] is typically offered [term(s)].
+B4|What term(s) is [class] typically offered?|[class] is typically offered [term(s)].
+B4|Which quarter(s) is [class] typically offered?|[class] is typically offered [term(s)].
+B4|What quarter(s) is [class] usually taught?|[class] is typically offered [term(s)].
+B4|Which term(s) is [class] usually taught?|[class] is typically offered [term(s)].
+B4|When is [class] being taught at Cal Poly?|[class] is typically offered [term(s)].
+B4|When does the statistics department offer [class]?|[class] is typically offered [term(s)].
+B4|How many quarters is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.
+B4|How often is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.
+B4|Is [class] offered every quarter?|[class] is usually offered in 1/2/3/4 quarters.
+B4|Does [class] involve coding?|Yes/No.
+B4|Is there programming in [class]?|Yes/No.
+B4|Do I have to code in [class]?|Yes/No.
+B4|Is there software used in [class]?|Yes/No.
+B4|What classes require coding?|[classes] require coding.
+B4|Which classes require programming?|[classes] require coding.
+
+[class]: Can be either the the stats course Id or the title of the course
+[term]: Fall, Winter, Spring or Summer quarter
+[professors]: list of professors teaching a specific course
+[sections]: the number of sections offered for the course for the next quarter
+[cap]: the enrollment capacity for the specified course for the next quarter
+[type]: is the course an elective or required course
+[description]: course description for the specified course
+[term(s)]: list of terms that a course is/could be offered
+[topic]: topic that could be taught in a statistics course, i.e. Linear Regression, Probability
+[topics]: list of topics pulled from sentence in the course description following keywords “Topics include”
+[units]: number of units a specified course is
+[times]: days of the week and hours the specified course is being offered
+[day]: day of the week a course is offered
+[classes]: list of prerequisites for the specified class or classes that fit requested parameters
+[id]: id number for the specified class name
+[level]: number representing the level of the class, i.e. 100-level, 200-level

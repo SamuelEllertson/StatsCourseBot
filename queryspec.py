@@ -20,8 +20,6 @@ class Intent(Enum):
     PROFESSOR_COURSES_NEXT              = auto()
 
     IS_COURSE_ELECTIVE                  = auto()
-    TYPE_OF_COURSE                      = auto()
-    APPROVED_ELECTIVES                  = auto()
     ELECTIVES_OFFERED_CURRENT           = auto()
     ELECTIVES_OFFERED_NEXT              = auto()
 
@@ -33,10 +31,9 @@ class Intent(Enum):
     TIMES_COURSE_OFFERED_NEXT           = auto()
 
     UNITS_OF_COURSE                     = auto()
-    HOURS_OF_COURSE                    = auto()
+    HOURS_OF_COURSE                     = auto()
 
     PREREQS_OF_COURSE                   = auto()
-    DOES_COURSE_HAVE_PREREQS            = auto()
 
     TITLE_OF_COURSE                     = auto()
     COURSE_ID_OF_COURSE                 = auto()
@@ -45,6 +42,9 @@ class Intent(Enum):
     ENROLLMENT_CAP_OF_COURSE_CURRENT    = auto()
 
     ENROLLMENT_CAP_OF_COURSE_NEXT       = auto()
+
+class MissingFieldException(Exception):
+    pass
 
 class QueryParameters():
 
@@ -60,16 +60,16 @@ class QueryParameters():
 
     def require_class_id(self):
         if self.class_id is None:
-            raise AttributeError("Class id")
+            raise MissingFieldException("Course id")
 
     def require_term(self):
         if self.term is None:
-            raise AttributeError("Term")
+            raise MissingFieldException("Term")
 
     def require_professor(self):
         if self.professor is None:
-            raise AttributeError("Professor")
+            raise MissingFieldException("Professor")
 
     def require_topic(self):
         if self.topic is None:
-            raise AttributeError("Topic")
+            raise MissingFieldException("Topic")
