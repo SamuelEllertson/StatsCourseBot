@@ -72,7 +72,8 @@ def scrape_courses():
             if prereqs_raw[i].endswith("Recommended:"):
                 reccomended = " ".join(prereqs_raw[i:])
         if "software" in desc or "csc" in prereqs.lower() or "331" in prereqs.lower() \
-         or "330" in prereqs.lower() or "cpe" in prereqs.lower():
+         or "330" in prereqs.lower() or "cpe" in prereqs.lower() or "programming" in title.lower() or \
+         "programming" in desc.lower() or "computing" in title.lower() or "computing" in desc.lower():
             coding_involved = True
 
         courses.append(
