@@ -108,7 +108,7 @@ class Model:
         while i < len(tags):
             found_variable = False
             # Check for a professor's name, spelled reasonably closely
-            matches = get_close_matches(tags[i][0], professor_names, n=1, cutoff=0.8)
+            matches = get_close_matches(tags[i][0], professor_names, n=1, cutoff=0.9)
             if len(matches) > 0:
                 vars.append(matches[0])
                 general_query += "[professor] "
