@@ -243,23 +243,3 @@ B4|What number of students can enroll is [class] next quarter?|The enrollment ca
 B4|How many spots are open next term for [class]?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|How many students can enroll in [class] next quarter?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
 B4|What is the number of open seats next quarter for [class]?|The enrollment cap for [class] next quarter is [cap].|ENROLLMENT_CAP_OF_COURSE_NEXT
-
-
-
-
-[class]: Can be either the the stats course Id or the title of the course
-[term]: Fall, Winter, Spring or Summer quarter
-[professors]: list of professors teaching a specific course
-[sections]: the number of sections offered for the course for the next quarter
-[cap]: the enrollment capacity for the specified course for the next quarter
-[type]: is the course an elective or required course
-[description]: course description for the specified course
-[term(s)]: list of terms that a course is/could be offered
-[topic]: topic that could be taught in a statistics course, i.e. Linear Regression, Probability
-[topics]: list of topics pulled from sentence in the course description following keywords “Topics include”
-[units]: number of units a specified course is
-[times]: days of the week and hours the specified course is being offered
-[day]: day of the week a course is offered
-[classes]: list of prerequisites for the specified class or classes that fit requested parameters
-[id]: id number for the specified class name
-[level]: number representing the level of the class, i.e. 100-level, 200-level
