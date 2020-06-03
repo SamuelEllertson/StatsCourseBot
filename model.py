@@ -1,21 +1,21 @@
 from queryspec import Intent, QueryParameters
 import nltk
 import string
-from typing import Tuple, List
+from typing import Tuple, List, Iterable
 from labeled_data import get_training_data
 import re
 from catboost import CatBoostClassifier
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from typing import Tuple, List
 from difflib import get_close_matches
-import numpy as np
-
-
+from collections import defaultdict
+import pickle
 
 """This is for parsing the intent from a message, as well as extracting the relevant information
 from a message based on the intent"""
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 class Model:
     def __init__(self, args, datastore, iohandler):
@@ -23,101 +23,86 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
         self.model = None
-        self.feature_vector = {}
-        self.tfidf = TfidfVectorizer()
+        self.tfidf = None
+
+        if args.new_model:
+            self.model = CatBoostClassifier(silent=True)
+            self.tfidf = TfidfVectorizer(tokenizer=str.split)
+            self.train_model()
+            self.save_model()
+        else:
+            self.load_model()
+
+    def save_model(self):
+        with open("model/model", "wb") as out_model, open("model/tfidf", "wb") as out_tfidf:
+            pickle.dump(self.model, out_model)
+            pickle.dump(self.tfidf, out_tfidf)
+
+    def load_model(self):
+        with open("model/model", "rb") as in_model, open("model/tfidf", "rb") as in_tfidf:
+            self.model = pickle.load(in_model)
+            self.tfidf = pickle.load(in_tfidf)
 
     def train_model(self):
         """Creates and trains a CatBoost algorithm on the sample query data."""
-        model = CatBoostClassifier(silent=True)
-        query_intent_map = get_training_data()
-        training = query_intent_map.keys()
-        wordnet_lemmatizer = WordNetLemmatizer()
-        documents = []
-        #print(self.make_compound())
+        labeled_data = get_training_data()
 
-        compound = self.make_compound()
-        items = [x.split("|") for x in compound]
-        for item in items:
-            words = "".join(
-                [c for c in item[0].strip() if c not in string.punctuation]
-            )
-            words = nltk.word_tokenize(words)
-            words = [word.lower() for word in words]
-            words = [wordnet_lemmatizer.lemmatize(w) for w in words]
-            documents.append(" ".join(words))
-        #print(documents)
+        documents = self.get_compound_strings()
+
         self.tfidf.fit(documents)
-        features = [self.get_features(r).toarray()[0] for r in training]
-        intents = [query_intent_map[r].name for r in training]
-        # vectors = []
-        #print(features)
-        #Get a corpus of every feature in the training set
-        # for extracted in features:
-        #     for feature in extracted:
-        #         if feature not in self.feature_vector:
-        #             self.feature_vector[feature] = 0
 
-        # # Create a feature vector from the entire corpus for each training record
-        # for vector in features:
-        #     new_features = dict.fromkeys(self.feature_vector, 0)
-        #     for feature in vector.keys():
-        #         new_features[feature] = vector[feature]
-        #     # Convert to values only
-        # new_features = np.array(list(new_features.values()))
-        # vectors.append(new_features)
-        model.fit(features, intents)
-        self.model = model
+        features = [self.get_features(query) for query in labeled_data.keys()]
+        intents = [intent.name for intent in labeled_data.values()]
 
-    def make_compound(self):
-        documents = []
+        self.model.fit(features, intents)
+
+    def clean_strings(self, strings: Iterable[str]) -> List[str]:
+        lemmatizer = WordNetLemmatizer()
+        punctuation = string.punctuation.replace('[', '').replace(']', '')
+
+        new_strings = []
+
+        for current_string in strings:
+            words = current_string.translate(str.maketrans('', '', punctuation)).lower().split()
+
+            clean_string = " ".join(lemmatizer.lemmatize(word) for word in words)
+
+            new_strings.append(clean_string)
+
+        return new_strings
+
+    def get_compound_strings(self) -> List[str]:
+        use_individual = False #can be used to see if using the individual examples, instead of compounding them, as the documents is any better
+        
+        if use_individual:
+            data = get_training_data()
+            return self.clean_strings(query for query, intent in data)
+
+        examples = defaultdict(list)
+
         with open("query.txt") as infile:
             lines = infile.readlines()
-            items = [x.split("|") for x in lines]
-            #items[0][3] = re.sub(r'\n', "", items[0][3]).rstrip()
-            #current = items[0][3]
-            temp_str = ""
-            for i in range(len(items) - 1):
-                items[i][1] = re.sub(r"[\.\?]", "", items[i][1])
-                items[i][2] = re.sub(r"[\.\?]", "", items[i][2])
-                #items[i][3] = re.sub(r'\n', "", items[i][3]).rstrip()
-                current = items[i][3]
-                if items[i+1][3] == current:
-                    temp_str += items[i][1] + " "
-                else:
-                    temp_str += str(items[i][1]) + " "
-                    temp_str += "|" + str(items[i][3])
-                    temp_str = re.sub(r"\n", "", temp_str)
-                    documents.append(temp_str)
-                    temp_str = ""
-        return documents
 
+        for line in lines:
+            components = line.split("|")
+
+            query = components[1]
+            intent = components[3]
+
+            examples[intent].append(query)
+
+        strings = [" ".join(queries) for queries in examples.values()]
+
+        return self.clean_strings(strings)
 
     def get_features(self, query):
         """Extracts the features from a generalized query.
         Uses uneven weighting to ensure that the type of variable matches the predicted intent.
         Ignores stop words and weights the remaining words evenly."""
-        wordnet_lemmatizer = WordNetLemmatizer()
-        # # First get all the variables out and weight them three times as much as everything else, weight of 3
-        # variables = re.findall(r"(\[(.*?)\])", query)
-        # for var in variables:
-        #     features[var[0]] = 3
-        #     query = query.replace(var[0], "")
+        
+        clean_query = self.clean_strings([query])[0]
 
-        # Tokenize, lowercase, and lemmatize all non-variable words
-        query = "".join([c for c in query if c not in string.punctuation])
-        words = nltk.word_tokenize(query)
-        words = [word.lower() for word in words]
-        words = [word for word in words if word not in string.punctuation]
-        words = [wordnet_lemmatizer.lemmatize(w) for w in words]
-
-        # if len(words) > 0:
-        #     # Add first word to features with weight of 2, changes intent drastically.
-        #     features[words[0]] = 2
-        #     for word in words[1:]:
-        #         # Add all non-stop words to features with weight of 1
-        #         # if word not in stop_words:
-        #         features[word] = 1
-        return self.tfidf.transform([query])
+        return self.tfidf.transform([clean_query]).toarray()[0]
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
@@ -211,14 +196,10 @@ class Model:
         generalized, variables = self.extract_variables(message)
         params = self.create_query_params(generalized, variables)
         vector = self.get_features(generalized)
-        # features = dict.fromkeys(self.feature_vector, 0)
-        # # Create a feature vector from the entire corpus
-        # for feature in vector.keys():
-        #     # Inore any features not in training set
-        #     if feature in features:
-        #         features[feature] = vector[feature]
-        # features = np.array(list(features.values()))
-        return Intent[self.model.predict(vector)[0][0]], params
+
+        prediction = self.model.predict(vector)[0]
+
+        return Intent[prediction], params
 
     def create_query_params(
         self, generalized: str, variables: List[str]

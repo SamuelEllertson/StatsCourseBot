@@ -49,7 +49,7 @@ class IOHandler():
                     return
 
                 self.send_message(self.responder.get_response(message))
-                
+
             except KeyboardInterrupt:
                 self.send_message(self.responder.get_exit_phrase())
                 break
