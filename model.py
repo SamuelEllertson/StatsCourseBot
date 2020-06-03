@@ -84,7 +84,7 @@ class Model:
         #         # Add all non-stop words to features with weight of 1
         #         # if word not in stop_words:
         #         features[word] = 1
-        return tfidf.transform(querys)
+        return tfidf.transform(query)
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
