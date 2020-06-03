@@ -2,8 +2,9 @@
 """This class is responsible for dealing with the content of a users message and generating responses."""
 
 from model import Model
+from datastore import Course, Section
+from typing import List, Set
 from queryspec import Intent, QueryParameters, MissingFieldException
-from datastore import Course
 
 '''Takes in a message from the user, and uses its model to create a response message'''
 
@@ -76,10 +77,10 @@ class Responder():
     #Use this as a model for implementing the rest
     def handler_prereqs_of_course(self, params: QueryParameters) -> str:
 
-        #require the presence of variable for a given intent, this corresponds to the [variable] in the query
+        # Require the presence of variable for a given intent, this corresponds to the [variable] in the query
         params.require_class_id() 
 
-        #Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
+        # Retrieve the course object via self.get_course() this handles the case of an invalid course automatically
         course = self.get_course(params.class_id)
 
         #Special case response since prereqs could be None
@@ -97,76 +98,367 @@ class Responder():
     
         return f"{course.full_name()} counts for {course.units} units."
 
-    def handler_course_offered_in_term(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_course_offered_in_term(self, params: QueryParameters) -> str:
 
-    def handler_terms_course_offered(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_term()
 
-    def handler_does_course_involve_coding(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        course = self.get_course(params.class_id)
 
-    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if params.term in course.terms:
+            return f"Yes, STAT {params.class_id} is offered in the {params.term.title()}."
+        else:
+            return f"Sorry, STAT {params.class_id} is not offered in the {params.term.title()}."
 
-    def handler_teachers_of_course_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_terms_course_offered(self, params: QueryParameters) -> str:
 
-    def handler_professor_courses_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        course = self.get_course(params.class_id)
 
-    def handler_professor_courses_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if len(course.terms) == 0:
+            return f"Sorry, {course.full_name()} is not a regularly offered class."
+        if len(course.terms) == 1:
+            return f"{course.full_name()} is typically offered in the {', '.join([t.title() for t in course.terms])}."
+        else:
+            return f"{course.full_name()} is typically offered in the following quarters: {', '.join([t.title() for t in course.terms])}."
 
-    def handler_is_course_elective(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_number_of_terms_course_offered(self, params: QueryParameters) -> str: 
 
-    def handler_electives_offered_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_electives_offered_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        course = self.get_course(params.class_id)
 
-    def handler_description_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        numberOfTerms = len(course.terms)
 
-    def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if numberOfTerms == 1:
+             return f"{course.full_name()} is usually offered in {numberOfTerms} quarter."
+        else:
+            return f"{course.full_name()} is usually offered in {numberOfTerms} quarters."
 
-    def handler_times_course_offered_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_does_course_involve_coding(self, params: QueryParameters) -> str:
 
-    def handler_times_course_offered_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        params.require_class_id()
 
-    def handler_hours_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        course = self.get_course(params.class_id)
 
-    def handler_title_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if course.coding_involved:
+            return f"Yes, {course.full_name()} involves coding."
+        else:
+           return f"No, {course.full_name()} does not involve coding."
 
-    def handler_course_id_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+    def handler_what_courses_involve_coding(self, params: QueryParameters) -> str: 
 
-    def handler_level_of_course(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        classes = self.datastore.get_classes_with_coding()
 
-    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        classes = ["STAT " + str(c) for c in classes]
 
-    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: #TODO
-        return 'Still need to implement'
+        if len(classes) > 1:
+            classes[-1] = "and " + str(classes[-1])
 
-    #Make one for each intent, same function definition for each
+        return f"{', '.join(classes)} require coding."
+
+    def handler_teachers_of_course_current(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
+
+        professors = set()
+
+        # Correct formatting and no duplicates
+        for section in sections:
+            name = section.teacher.split(", ")[0].title()
+            professors.add(name)
+
+        professors = list(professors)
+
+        if len(professors) > 1:
+            professors[-1] = "and " + professors[-1]
+
+        # Can have 0, 1, or multiple professors teaching a class
+        if len(professors) == 1:
+            return f"Professor {', '.join(professors)} is teaching {sections[0].full_name()} this quarter."
+        elif len(professors) == 0:
+            return f"Sorry, no one is teaching STAT {params.class_id} this quarter."
+        else:
+            return f"Professors {', '.join(professors)} are teaching {sections[0].full_name()} this quarter."
+
+    def handler_professor_courses_current(self, params: QueryParameters) -> str:
+
+        params.require_professor()
+
+        sections = self.get_sections_from_professor(params.professor, True)
+
+        if len(sections) == 0:
+            return f"Sorry, {params.professor} is not teaching any courses this quarter."
+
+        classes = set()
+
+        # Correct formatting and no duplicates
+        for section in sections:
+            name = section.full_name()
+            classes.add(name)
+
+        classes = list(classes)
+
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
+
+        if len(classes) == 0:
+            return f"Sorry, Professor {params.professor.title()} is not teaching any classes this quarter."
+        elif len(classes) == 2:
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' and ' + classes[1]} this quarter."   
+        else:
+            return f"Professor {params.professor.title()} is teaching {', '.join(classes)} this quarter."            
+
+    def handler_teachers_of_course_next(self, params: QueryParameters) -> str: 
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} next quarter."              
+
+        professors = set()
+
+        # Correct formatting and no duplicates
+        for section in sections:
+            name = section.teacher.split(", ")[0].title()
+            professors.add(name)
+
+        professors = list(professors)
+
+        if len(professors) > 1:
+            professors[-1] = "and " + professors[-1]
+
+        # Can have 0, 1, or multiple professors teaching a class
+        if len(professors) == 1:
+            return f"Professor {', '.join(professors)} is teaching {sections[0].full_name()} next quarter."
+        elif len(professors) == 0:
+            return f"Sorry, no one is teaching STAT {params.class_id} next quarter."
+        else:
+            return f"Professors {', '.join(professors)} are teaching {sections[0].full_name()} next quarter."
+
+    def handler_professor_courses_next(self, params: QueryParameters) -> str: 
+        params.require_professor()
+
+        sections = self.get_sections_from_professor(params.professor, False)
+
+        if len(sections) == 0:
+            return f"Sorry, {params.professor} is not teaching any courses this quarter."
+
+        classes = set()
+
+        # Correct formatting and no duplicates
+        for section in sections:
+            name = section.full_name()
+            classes.add(name)
+
+        classes = list(classes)
+
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
+
+        if len(classes) == 0:
+            return f"Sorry, Professor {params.professor.title()} is not teaching any classes next quarter."
+        elif len(classes) == 2:
+            return f"Professor {params.professor.title()} is teaching {classes[0] + ' and ' + classes[1]} next quarter." 
+        else:
+            return f"Professor {params.professor.title()} is teaching {', '.join(classes)} next quarter."            
+
+    def handler_is_course_elective(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        if course.elective:
+            return f"Yes, {course.full_name()} is an elective."
+        else:
+             return f"No, {course.full_name()} is not an elective."
+
+    def handler_electives_offered_current(self, params: QueryParameters) -> str:
+        
+        results = self.datastore.get_electives_by_quarter(True)
+
+        classes = []
+
+        for result in results:
+            classes.append("STAT " + str(result))
+
+        if len(classes) > 1:
+            classes[-1] = "and " + str(classes[-1])
+
+        if len(classes) == 0:
+            return f"Sorry, there are no electives offered this quarter."
+        else:
+            return f"{', '.join(classes)} are all the electives this quarter."
+
+    def handler_electives_offered_next(self, params: QueryParameters) -> str: 
+
+        results = self.datastore.get_electives_by_quarter(False)
+
+        classes = []
+
+        for result in results:
+            classes.append("STAT " + str(result))
+
+        if len(classes) > 1:
+            classes[-1] = "and " + str(classes[-1])
+
+        if len(classes) == 0:
+            return f"Sorry, there are no electives offered next quarter."
+        else:
+            return f"{', '.join(classes)} are all the electives offered next quarter."
+
+    def handler_description_of_course(self, params: QueryParameters) -> str: #TODO: Make sure response sounds natural
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"{course.full_name()} is about {course.about}."
+
+    def handler_find_course_about_topic(self, params: QueryParameters) -> str: #TODO: Improve response message
+
+        params.require_topic()
+
+        courses = self.datastore.get_courses_about_topic(params.topic)
+
+        classes = [] 
+
+        for course in courses:
+            classes.append(course.full_name())
+
+        if len(classes) > 2:
+            classes[-1] = "and " + str(classes[-1])
+
+
+        if len(classes) == 0:
+            return f"Sorry, there aren't any courses about {params.topic}"
+        elif len(classes) == 1:
+            return f"{', '.join(classes)} is about {params.topic}."
+        elif len(classes) == 2:
+            return f"{classes[0] + ' and ' + classes[1]} are about {params.topic}."
+        else:
+            return f"{', '.join(classes)} are about {params.topic}."
+
+    def handler_times_course_offered_current(self, params: QueryParameters) -> str: 
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} this quarter."
+                                                                             
+        times = []
+
+        for section in sections:
+            if len(section.times_offered) > 0:
+                times.append(section.times_offered)
+
+        if len(times) > 2:
+            times[-1] = "and " + str(times[-1])
+
+        if len(times) == 0:
+            return f"Sorry, {sections[0].full_name()} isn't offered synchronously this quarter. "
+        elif len(times) == 2:
+            return f"{sections[0].full_name()} is offered at {times[0] + ' and ' + times[1]} each week this quarter."
+        else:
+             return f"{sections[0].full_name()} is offered at {', '.join(times)} each week this quarter."
+
+    def handler_times_course_offered_next(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+ 
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
+
+        if len(sections) == 0:
+            return f"Sorry, there are no sections of STAT {params.class_id} next quarter."
+
+        times = []
+
+        for section in sections:
+            if len(section.times_offered) > 0:
+                times.append(section.times_offered)
+
+        if len(times) > 2:
+            times[-1] = "and " + str(times[-1])
+
+        if len(times) == 0:
+            return f"Sorry, {sections[0].full_name()} isn't offered synchronously next quarter. "
+        elif len(times) == 2:
+            return f"{sections[0].full_name()} is offered at {times[0] + ' and ' + times[1]} each week next quarter."
+        else:
+             return f"{sections[0].full_name()} is offered at {', '.join(times)} each week next quarter."
+
+    def handler_hours_of_course(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"{course.full_name()} meets for {course.units} hours a week."
+
+    def handler_title_of_course(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"The title of {course.full_name()} is {course.title}."
+
+    def handler_course_id_of_course(self, params: QueryParameters) -> str:
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"The class number of {course.full_name()} is {course.id}."
+
+    def handler_level_of_course(self, params: QueryParameters) -> str: #TODO: Verify works correctly
+
+        params.require_class_id()
+
+        course = self.get_course(params.class_id)
+
+        return f"The level of {course.full_name()} is {str(course.id)[0]}00"
+
+    def handler_enrollment_cap_of_course_current(self, params: QueryParameters) -> str: 
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, True)
+
+        cap = 0
+        for section in sections:
+            cap += section.enrollment_cap
+
+        return f"The enrollment cap for {sections[0].full_name()} this quarter is {cap}."
+
+    def handler_enrollment_cap_of_course_next(self, params: QueryParameters) -> str: 
+
+        params.require_class_id()
+
+        sections = self.datastore.get_sections_from_id_and_quarter(params.class_id, False)
+
+        cap = 0
+        for section in sections:
+            cap += section.enrollment_cap                                                                                                                    
+        return f"The enrollment cap for {sections[0].full_name()} next quarter is {cap}."
+
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
         '''special handler for when an intent was determined, but the required parameters were missing'''
+        if intent == Intent.COURSE_OFFERED_IN_TERM and missing_value == "Course id":
+            return f"Sorry, I can't understand what course you're talking about." 
 
         return f"intent: {intent.name}, missing value: {missing_value}" #TODO: make this better
 
