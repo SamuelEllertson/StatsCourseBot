@@ -457,6 +457,8 @@ class Responder():
 
     def missing_information_response(self, intent: Intent, params: QueryParameters, missing_value: str):
         '''special handler for when an intent was determined, but the required parameters were missing'''
+        if intent == Intent.COURSE_OFFERED_IN_TERM and missing_value == "Course id":
+            return f"Sorry, I can't understand what course you're talking about." 
 
         return f"intent: {intent.name}, missing value: {missing_value}" #TODO: make this better
 

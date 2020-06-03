@@ -56,7 +56,7 @@ class Model:
         features = {}
         stop_words = set(nltk.corpus.stopwords.words("english"))
         wordnet_lemmatizer = WordNetLemmatizer()
-        # First get all the variables out and weight them twice as much as everything else, weight of 100
+        # First get all the variables out and weight them three times as much as everything else, weight of 3
         variables = re.findall(r"(\[(.*?)\])", query)
         for var in variables:
             features[var[0]] = 3
@@ -69,18 +69,21 @@ class Model:
         words = [word for word in words if word not in string.punctuation]
         words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
-        # Add first word to features with weight of 50, changes intent drastically.
-        features[words[0]] = 2
-        for word in words[1:]:
-            # Add all non-stop words to features with weight of 15
-            # if word not in stop_words:
-            features[word] = 1
+        if len(words) > 0:
+            # Add first word to features with weight of 2, changes intent drastically.
+            features[words[0]] = 2
+            for word in words[1:]:
+                # Add all non-stop words to features with weight of 1
+                # if word not in stop_words:
+                features[word] = 1
         return features
 
     def extract_variables(self, query: str) -> Tuple[str, List[str]]:
         """Takes in a raw query from the user and extracts the variables from the query, then generalizes the query.
             Returns the generalized form of the query and the list of variables."""
+        # Remove course prefixes and punctuation
         query = "".join([c for c in query if c not in string.punctuation])
+        query = query.replace("STAT", "")
         tags = nltk.pos_tag(nltk.word_tokenize(query))
         stop_words = set(nltk.corpus.stopwords.words("english"))
         topic_words = ["on", "about", "covering", "cover"]
@@ -88,8 +91,6 @@ class Model:
         teacher_titles = ["professor", "prof", "mr", "mrs"]
         titles = self.datastore.get_course_titles()
         professor_names = self.datastore.get_professor_names()
-        # Remove course prefixes, if any
-        query = query.replace("STAT", "")
         vars = []
         general_query = ""
 
@@ -118,6 +119,7 @@ class Model:
                             " ".join([t[0] for t in tags[j:i]]), ""
                         )
                         general_query += "[class] "
+                        break
                     j += 1
             # Class id found
             if tags[i][1] == "CD" and "[class] " not in general_query:
