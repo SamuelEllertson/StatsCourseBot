@@ -48,5 +48,5 @@ def test_model():
     print(res)
 
 if __name__ == '__main__':
-    # main()
-    test_model()
+    main()
+    # test_model()

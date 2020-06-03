@@ -192,7 +192,7 @@ class Responder():
 
         params.require_professor()
 
-        sections = self.get_sections_from_professor(params.professor, True)
+        sections = self.datastore.get_sections_from_professor(params.professor, True)
 
         if len(sections) == 0:
             return f"Sorry, {params.professor} is not teaching any courses this quarter."
