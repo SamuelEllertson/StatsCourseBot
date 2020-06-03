@@ -28,13 +28,19 @@ class Model:
     def train_model(self):
         """Creates and trains a CatBoost algorithm on the sample query data."""
         model = CatBoostClassifier(silent=True)
-        # Extract features from test set
         query_intent_map = get_training_data()
         training = query_intent_map.keys()
-        features = self.tfidf.fit_transform(training)
-        # features = [self.get_features(r) for r in training]
+        documents = []
+        with open("merged_queries.txt") as fd:
+            lines = fd.readlines()
+            items = [x.split("|") for x in lines]
+            for item in items:
+                documents.append(item[0].strip())
+        self.tfidf.fit(documents)
+        features = [self.get_features(r).toarray()[0] for r in training]
         intents = [query_intent_map[r].name for r in training]
         vectors = []
+        # print(features)
         # Get a corpus of every feature in the training set
         # for extracted in features:
         #     for feature in extracted:
