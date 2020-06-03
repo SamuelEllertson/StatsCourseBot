@@ -12,6 +12,7 @@ from difflib import get_close_matches
 import numpy as np
 
 
+
 """This is for parsing the intent from a message, as well as extracting the relevant information
 from a message based on the intent"""
 
@@ -32,30 +33,31 @@ class Model:
         training = query_intent_map.keys()
         wordnet_lemmatizer = WordNetLemmatizer()
         documents = []
-        with open("merged_queries.txt") as fd:
-            lines = fd.readlines()
-            items = [x.split("|") for x in lines]
-            for item in items:
-                words = "".join(
-                    [c for c in item[0].strip() if c not in string.punctuation]
-                )
-                words = nltk.word_tokenize(words)
-                words = [word.lower() for word in words]
-                words = [wordnet_lemmatizer.lemmatize(w) for w in words]
-                documents.append(" ".join(words))
-        print(documents)
+        #print(self.make_compound())
+
+        compound = self.make_compound()
+        items = [x.split("|") for x in compound]
+        for item in items:
+            words = "".join(
+                [c for c in item[0].strip() if c not in string.punctuation]
+            )
+            words = nltk.word_tokenize(words)
+            words = [word.lower() for word in words]
+            words = [wordnet_lemmatizer.lemmatize(w) for w in words]
+            documents.append(" ".join(words))
+        #print(documents)
         self.tfidf.fit(documents)
         features = [self.get_features(r).toarray()[0] for r in training]
         intents = [query_intent_map[r].name for r in training]
-        vectors = []
-        # print(features)
-        # Get a corpus of every feature in the training set
+        # vectors = []
+        #print(features)
+        #Get a corpus of every feature in the training set
         # for extracted in features:
         #     for feature in extracted:
         #         if feature not in self.feature_vector:
         #             self.feature_vector[feature] = 0
 
-        # Create a feature vector from the entire corpus for each training record
+        # # Create a feature vector from the entire corpus for each training record
         # for vector in features:
         #     new_features = dict.fromkeys(self.feature_vector, 0)
         #     for feature in vector.keys():
@@ -65,6 +67,30 @@ class Model:
         # vectors.append(new_features)
         model.fit(features, intents)
         self.model = model
+
+    def make_compound(self):
+        documents = []
+        with open("query.txt") as infile:
+            lines = infile.readlines()
+            items = [x.split("|") for x in lines]
+            #items[0][3] = re.sub(r'\n', "", items[0][3]).rstrip()
+            #current = items[0][3]
+            temp_str = ""
+            for i in range(len(items) - 1):
+                items[i][1] = re.sub(r"[\.\?]", "", items[i][1])
+                items[i][2] = re.sub(r"[\.\?]", "", items[i][2])
+                #items[i][3] = re.sub(r'\n', "", items[i][3]).rstrip()
+                current = items[i][3]
+                if items[i+1][3] == current:
+                    temp_str += items[i][1] + " "
+                else:
+                    temp_str += str(items[i][1]) + " "
+                    temp_str += "|" + str(items[i][3])
+                    temp_str = re.sub(r"\n", "", temp_str)
+                    documents.append(temp_str)
+                    temp_str = ""
+        return documents
+
 
     def get_features(self, query):
         """Extracts the features from a generalized query.
