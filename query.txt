@@ -192,6 +192,7 @@ B4|Name the prerequisites of [class].|The prerequisites for [class] are [classes
 B4|Name the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|Give me the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|How many prereqs does [class] have?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
+B4|If I want to take [class], what do I need to take?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|What’s the class name of [class]?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|Give me the name of [class].|The title of [class] is [title].|TITLE_OF_COURSE
 B4|What is [class] called?|The title of [class] is [title].|TITLE_OF_COURSE
