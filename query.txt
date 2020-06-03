@@ -12,10 +12,10 @@ B4|When can I next take [class]?|[class] is typically offered [term(s)].|TERMS_C
 B4|When is [class] being offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When is [class] available?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When can I take [class]?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|What term(s) is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|Which quarter(s) is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|What quarter(s) is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
-B4|Which term(s) is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|What term is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|Which quarters is [class] typically offered?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|What quarters is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
+B4|Which term is [class] usually taught?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When is [class] being taught at Cal Poly?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|When does the statistics department offer [class]?|[class] is typically offered [term(s)].|TERMS_COURSE_OFFERED
 B4|How many quarters is [class] usually offered?|[class] is usually offered in 1/2/3/4 quarters.|NUMBER_OF_TERMS_COURSE_OFFERED
@@ -193,6 +193,7 @@ B4|Name the prereqs of [class].|The prerequisites for [class] are [classes].|PRE
 B4|Give me the prereqs of [class].|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|How many prereqs does [class] have?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|If I want to take [class], what do I need to take?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
+B4|What classes do I need to take before taking [class]?|The prerequisites for [class] are [classes].|PREREQS_OF_COURSE
 B4|What’s the class name of [class]?|The title of [class] is [title].|TITLE_OF_COURSE
 B4|Give me the name of [class].|The title of [class] is [title].|TITLE_OF_COURSE
 B4|What is [class] called?|The title of [class] is [title].|TITLE_OF_COURSE
