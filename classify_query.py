@@ -27,13 +27,12 @@ import pandas as pd
 
 
 class Record:
-    def __init__(self, query, answer, intent):
+    def __init__(self, query, intent):
         self.query = query
-        self.answer = answer
         self.intent = intent
 
     def __repr__(self):
-        return str(self.query) + " | " + str(self.answer) + " | " + str(self.intent)
+        return str(self.query) + " | " + str(self.intent)
 
 
 # Only use intents that have at least two records
@@ -51,6 +50,27 @@ def get_records(records):
                 new_records.remove(record)
     return new_records
 
+def manip_queries():
+    records = []
+    with open("merged_queries.txt", "w") as outfile:
+        with open("query.txt") as infile:
+            lines = infile.readlines()
+            items = [x.split("|") for x in lines]
+            #items[0][3] = re.sub(r'\n', "", items[0][3]).rstrip()
+            #current = items[0][3]
+            for i in range(len(items) - 1):
+                items[i][1] = re.sub(r"[\.\?]", "", items[i][1])
+                items[i][2] = re.sub(r"[\.\?]", "", items[i][2])
+                #items[i][3] = re.sub(r'\n', "", items[i][3]).rstrip()
+                current = items[i][3]
+                if items[i+1][3] == current:
+                    outfile.write(str(items[i][1]) + " ")
+                else:
+                    outfile.write(str(items[i][1]) + " ")
+                    outfile.write("|" + str(items[i][3]))
+                
+
+
 
 def main():
     records = []
@@ -61,24 +81,31 @@ def main():
     # nltk.download("averaged_perceptron_tagger")
     # nltk.download("tagsets")
     # nltk.download("punkt")
-    punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
-    with open("query.txt") as fd:
+    #punc = r"""!()-{};:'"\,<>./?@#$%^&*_~"""
+    manip_queries()
+    documents = []
+    with open("merged_queries.txt") as fd:
         lines = fd.readlines()
         #print(lines)
         #lines = [x.strip().translate(str.maketrans("", "", punc)) for x in lines]
         #print(lines)
         items = [x.split("|") for x in lines]
-        items = [i for i in items if i[0] == "B4"]
         for item in items:
-            words = item[1].split(" ")
-            item[1] = re.sub(r"[\.\?]", "", item[1])
-            item[2] = re.sub(r"[\.\?]", "", item[2])
-            item[3] = re.sub(r'\n', "", item[3]).rstrip()
-            #print(item[2])
-            records.append(Record(item[1], item[2], Intent[item[3]]))
+            documents.append(item[0])
+        #items = [i for i in items if i[0] == "B4"]
+        # for item in items:
+        #     words = item[1].split(" ")
+        #     item[0] = re.sub(r"[\.\?]", "", item[0])
+        #     #item[2] = re.sub(r"[\.\?]", "", item[2])
+        #     item[1] = re.sub(r'\n', "", item[1]).rstrip()
+        #     #print(item[2])
+        #     records.append(Record(item[0], Intent[item[1]]))
         #print(records)
+    #print(documents)
+    # validate(records)
+    tfidf = TfidfVectorizer(stop_words = stop_words)
+    tfidf.fit(documents)
 
-    validate(records)
 
     # args = get_args()
     # datastore = DataStore(args)
