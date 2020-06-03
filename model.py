@@ -30,12 +30,20 @@ class Model:
         model = CatBoostClassifier(silent=True)
         query_intent_map = get_training_data()
         training = query_intent_map.keys()
+        wordnet_lemmatizer = WordNetLemmatizer()
         documents = []
         with open("merged_queries.txt") as fd:
             lines = fd.readlines()
             items = [x.split("|") for x in lines]
             for item in items:
-                documents.append(item[0].strip())
+                words = "".join(
+                    [c for c in item[0].strip() if c not in string.punctuation]
+                )
+                words = nltk.word_tokenize(words)
+                words = [word.lower() for word in words]
+                words = [wordnet_lemmatizer.lemmatize(w) for w in words]
+                documents.append(" ".join(words))
+        print(documents)
         self.tfidf.fit(documents)
         features = [self.get_features(r).toarray()[0] for r in training]
         intents = [query_intent_map[r].name for r in training]
@@ -62,21 +70,19 @@ class Model:
         """Extracts the features from a generalized query.
         Uses uneven weighting to ensure that the type of variable matches the predicted intent.
         Ignores stop words and weights the remaining words evenly."""
-        # features = {}
-        # stop_words = set(nltk.corpus.stopwords.words("english"))
-        # wordnet_lemmatizer = WordNetLemmatizer()
+        wordnet_lemmatizer = WordNetLemmatizer()
         # # First get all the variables out and weight them three times as much as everything else, weight of 3
         # variables = re.findall(r"(\[(.*?)\])", query)
         # for var in variables:
         #     features[var[0]] = 3
         #     query = query.replace(var[0], "")
 
-        # # Tokenize, lowercase, and lemmatize all non-variable words
-        # query = "".join([c for c in query if c not in string.punctuation])
-        # words = nltk.word_tokenize(query)
-        # words = [word.lower() for word in words]
-        # words = [word for word in words if word not in string.punctuation]
-        # words = [wordnet_lemmatizer.lemmatize(w) for w in words]
+        # Tokenize, lowercase, and lemmatize all non-variable words
+        query = "".join([c for c in query if c not in string.punctuation])
+        words = nltk.word_tokenize(query)
+        words = [word.lower() for word in words]
+        words = [word for word in words if word not in string.punctuation]
+        words = [wordnet_lemmatizer.lemmatize(w) for w in words]
 
         # if len(words) > 0:
         #     # Add first word to features with weight of 2, changes intent drastically.
