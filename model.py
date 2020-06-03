@@ -22,8 +22,10 @@ class Model:
         self.args = args
         self.datastore = datastore
         self.iohandler = iohandler
-        self.model = CatBoostClassifier(silent=True)
         self.tfidf = TfidfVectorizer(tokenizer=str.split)
+        self.model = CatBoostClassifier(silent=True)
+
+        self.train_tfidf()
 
         if args.new_model:
             self.train_model()
@@ -32,29 +34,24 @@ class Model:
             self.load_model()
 
     def save_model(self):
-        with open("model/tfidf", "wb") as out_tfidf:
-            pickle.dump(self.tfidf, out_tfidf)
-
-        self.model.save_model("model/model")
+        self.model.save_model("model/model", format="json")
 
     def load_model(self):
-        with open("model/tfidf", "rb") as in_tfidf:
-            self.tfidf = pickle.load(in_tfidf)
-
-        self.model.load_model("model/model")
+        self.model.load_model("model/model", format="json")
 
     def train_model(self):
         """Creates and trains a CatBoost algorithm on the sample query data."""
         labeled_data = get_training_data()
 
-        documents = self.get_compound_strings()
-
-        self.tfidf.fit(documents)
-
         features = [self.get_features(query) for query in labeled_data.keys()]
         intents = [intent.name for intent in labeled_data.values()]
 
         self.model.fit(features, intents)
+
+    def train_tfidf(self):
+        documents = self.get_compound_strings()
+
+        self.tfidf.fit(documents)
 
     def clean_strings(self, strings: Iterable[str]) -> List[str]:
         lemmatizer = WordNetLemmatizer()
