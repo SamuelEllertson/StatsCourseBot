@@ -12,3 +12,8 @@ source ./env/bin/activate
 pip install -r requirements.txt
 
 python3 main.py --init
+
+echo ""
+echo "Remember to run 'source ./env/bin/activate' to activate the virtual environment."
+echo "Run the chatbot with 'python3 main.py'"
+echo ""
