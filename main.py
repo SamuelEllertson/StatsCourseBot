@@ -35,17 +35,21 @@ def init(args):
         print("Create db.json first")
         return
 
+    print("Downloading nltk packages")
     nltk.download("stopwords")
     nltk.download("punkt")
     nltk.download("wordnet")
     nltk.download("averaged_perceptron_tagger")
 
+    print("Creating the database tables")
     datastore = DataStore(args)
     datastore.create_tables()
     datastore.close()
 
-    model = Model(args) 
+    print("Creating the classifier")
+    Model(args) 
 
+    print("Scraping the data")
     scrape_data(args)
 
 def main():
@@ -64,17 +68,6 @@ def main():
 
     iohandler.listen()
 
-def test_model():
-    args = get_args()
-
-    datastore = DataStore(args)
-    iohandler = IOHandler(args, datastore)
-
-    model = Model(args, datastore, iohandler)
-
-    res = model.extract_variables("What classes can I take after taking STAT312?")
-    print(res)
 
 if __name__ == '__main__':
     main()
-    # test_model()
