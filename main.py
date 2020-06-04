@@ -28,9 +28,6 @@ def get_args():
 
 def init(args):
 
-    print(args.dev_mode)
-    print(Path("db.json").exists())
-
     if args.dev_mode and not Path("db_dev.json").exists():
         print("Create db_dev.json first")
         return
