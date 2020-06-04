@@ -300,6 +300,21 @@ class DataStore():
 
         return result
 
+    def create_tables(self):
+        with open("create_tables.sql") as infile:
+            commands = (" ".join(line.strip() for line in infile.readlines())).split(";")[:-1]
+
+        with self.connection.cursor() as cursor:
+
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+
+                for statement in commands:
+                    cursor.execute(f"{statement};")
+
+    def close(self):
+        self.connection.close()
+
 
 
 

@@ -18,7 +18,6 @@ class Responder():
         self.datastore = datastore
         self.iohandler = iohandler
         self.model = Model(args, datastore, iohandler)
-        self.model.train_model()
 
         self.intent_to_handler = {
             Intent.UNKNOWN                          : self.handler_unknown,
@@ -67,6 +66,15 @@ class Responder():
 
         except InvalidCourseException as e:
             return self.invalid_course_message(str(e))
+
+        except KeyboardInterrupt as e:
+            raise e
+
+        except Exception as e:
+            if self.args.dev_mode:
+                raise e
+            else:
+                return self.get_error_message()
 
     # Query handlers 
 
@@ -192,7 +200,7 @@ class Responder():
 
         params.require_professor()
 
-        sections = self.get_sections_from_professor(params.professor, True)
+        sections = self.datastore.get_sections_from_professor(params.professor, True)
 
         if len(sections) == 0:
             return f"Sorry, {params.professor} is not teaching any courses this quarter."
@@ -248,7 +256,7 @@ class Responder():
     def handler_professor_courses_next(self, params: QueryParameters) -> str: 
         params.require_professor()
 
-        sections = self.get_sections_from_professor(params.professor, False)
+        sections = self.datastore.get_sections_from_professor(params.professor, False)
 
         if len(sections) == 0:
             return f"Sorry, {params.professor} is not teaching any courses this quarter."
@@ -490,3 +498,6 @@ class Responder():
 
     def get_exit_phrase(self):
         return "Bye"
+
+    def get_error_message(self):
+        return "Sorry, something went wrong."
