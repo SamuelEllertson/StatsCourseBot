@@ -27,10 +27,14 @@ def get_args():
     return parser.parse_args()
 
 def init(args):
+
+    print(args.dev_mode)
+    print(Path("db.json").exists())
+
     if args.dev_mode and not Path("db_dev.json").exists():
         print("Create db_dev.json first")
         return
-    elif not args.dev_mode and not Path("db_dev.json").exists():
+    elif not args.dev_mode and not Path("db.json").exists():
         print("Create db.json first")
         return
 
