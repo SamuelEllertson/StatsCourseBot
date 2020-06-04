@@ -55,6 +55,10 @@ def init(args):
 def main():
     args = get_args()
 
+    if not Path("saved_model.cbm").exists() and not args.init:
+        print("First run with --init to initialize the chatbot.")
+        return
+
     if args.init:
         init(args)
         return
