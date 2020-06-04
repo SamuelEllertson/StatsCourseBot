@@ -37,10 +37,10 @@ class Model:
         self.save_model()
 
     def save_model(self):
-        self.model.save_model("model/model", format="json")
+        self.model.save_model("saved_model.cbm")
 
     def load_model(self):
-        self.model.load_model("model/model", format="json")
+        self.model.load_model("saved_model.cbm")
 
     def train_model(self):
         """Creates and trains a CatBoost algorithm on the sample query data."""
