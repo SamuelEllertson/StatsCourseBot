@@ -6,6 +6,7 @@ from dataupdater import scrape_data
 from iohandler import IOHandler
 from model import Model
 import nltk
+from pathlib import Path
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
@@ -26,6 +27,13 @@ def get_args():
     return parser.parse_args()
 
 def init(args):
+    if args.dev_mode and not Path("db_dev.json").exists():
+        print("Create db_dev.json first")
+        return
+    elif not args.dev_mode and not Path("db_dev.json").exists():
+        print("Create db.json first")
+        return
+
     nltk.download("stopwords")
     nltk.download("punkt")
     nltk.download("wordnet")
