@@ -1,8 +1,6 @@
 #!/bin/bash
 
-scl enable rh-python36 bash
-
-python3 -m virtualenv env
+/opt/rh/rh-python36/root/usr/bin/python3 -m virtualenv env
 
 source ./env/bin/activate
 
