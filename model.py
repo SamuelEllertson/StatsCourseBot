@@ -15,7 +15,9 @@ import pickle
 from a message based on the intent"""
 
 import warnings
+
 warnings.filterwarnings("ignore", category=UserWarning)
+
 
 class Model:
     def __init__(self, args, datastore=None, iohandler=None):
@@ -58,12 +60,16 @@ class Model:
 
     def clean_strings(self, strings: Iterable[str]) -> List[str]:
         lemmatizer = WordNetLemmatizer()
-        punctuation = string.punctuation.replace('[', '').replace(']', '')
+        punctuation = string.punctuation.replace("[", "").replace("]", "")
 
         new_strings = []
 
         for current_string in strings:
-            words = current_string.translate(str.maketrans('', '', punctuation)).lower().split()
+            words = (
+                current_string.translate(str.maketrans("", "", punctuation))
+                .lower()
+                .split()
+            )
 
             clean_string = " ".join(lemmatizer.lemmatize(word) for word in words)
 
@@ -72,8 +78,8 @@ class Model:
         return new_strings
 
     def get_compound_strings(self) -> List[str]:
-        use_individual = False #can be used to see if using the individual examples, instead of compounding them, as the documents is any better
-        
+        use_individual = False  # can be used to see if using the individual examples, instead of compounding them, as the documents is any better
+
         if use_individual:
             data = get_training_data()
             return self.clean_strings(query for query, intent in data)
@@ -99,7 +105,7 @@ class Model:
         """Extracts the features from a generalized query.
         Uses uneven weighting to ensure that the type of variable matches the predicted intent.
         Ignores stop words and weights the remaining words evenly."""
-        
+
         clean_query = self.clean_strings([query])[0]
 
         return self.tfidf.transform([clean_query]).toarray()[0]
@@ -112,9 +118,26 @@ class Model:
         query = query.replace("STAT", "")
         tags = nltk.pos_tag(nltk.word_tokenize(query))
         stop_words = set(nltk.corpus.stopwords.words("english"))
-        topic_words = ["on", "about", "covering", "cover"]
-        terms = ["summer", "spring", "fall", "winter"]
-        teacher_titles = ["professor", "prof", "mr", "mrs"]
+        topic_words = {"on", "about", "covering", "cover"}
+        terms = {"summer", "spring", "fall", "winter"}
+        teacher_titles = {
+            "professor",
+            "prof",
+            "prof.",
+            "doctor",
+            "dr.",
+            "dr",
+            "mrs.",
+            "mrs",
+            "mr.",
+            "mr",
+            "mister",
+            "ms.",
+            "ms",
+            "miss",
+            "instructor",
+        }
+
         titles = self.datastore.get_course_titles()
         professor_names = self.datastore.get_professor_names()
         vars = []
