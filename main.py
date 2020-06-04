@@ -5,6 +5,7 @@ from datastore import DataStore
 from dataupdater import scrape_data
 from iohandler import IOHandler
 from model import Model
+import nltk
 
 '''This handles parsing arguments, initializing the DataStore and IOHandler, and starts listening and
 responding to messages.
@@ -13,6 +14,7 @@ Aside from some error handling and recovery which can be added later, its essent
 def get_args():
     parser = argparse.ArgumentParser(description='Chatbot that answers questions about CalPoly Stats Courses', formatter_class=Formatter)
     parser.add_argument('-v',            dest="verbose",     action="store_true", help='Toggles verbose output')
+    parser.add_argument('--init',        dest="init",        action="store_true", help='initializes project')
     parser.add_argument('--dev',         dest="dev_mode",    action="store_true", help='Turns on development mode')
     parser.add_argument('--new-model',   dest="new_model",   action="store_true", help='Generate a new model instead of loading it')
     parser.add_argument('--scrape',      dest="scrape",      action="store_true", help='Scrape and update database instead of running the chatbot')
@@ -23,8 +25,26 @@ def get_args():
     parser.add_argument('--bot-name',    dest="bot_name",    metavar= "name",    default='StatsCourseBot',   help='Sets bot name')
     return parser.parse_args()
 
+def init(args):
+    nltk.download("stopwords")
+    nltk.download("punkt")
+    nltk.download("wordnet")
+    nltk.download("averaged_perceptron_tagger")
+
+    datastore = DataStore(args)
+    datastore.create_tables()
+    datastore.close()
+
+    model = Model(args) 
+
+    scrape_data(args)
+
 def main():
     args = get_args()
+
+    if args.init:
+        init(args)
+        return
 
     if args.scrape:
         scrape_data(args)
@@ -34,7 +54,6 @@ def main():
     iohandler = IOHandler(args, datastore)
 
     iohandler.listen()
-
 
 def test_model():
     args = get_args()

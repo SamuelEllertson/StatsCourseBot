@@ -18,7 +18,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 class Model:
-    def __init__(self, args, datastore, iohandler):
+    def __init__(self, args, datastore=None, iohandler=None):
         self.args = args
         self.datastore = datastore
         self.iohandler = iohandler
@@ -27,11 +27,14 @@ class Model:
 
         self.train_tfidf()
 
-        if args.new_model:
-            self.train_model()
-            self.save_model()
+        if args.new_model or args.init:
+            self.new_model()
         else:
             self.load_model()
+
+    def new_model(self):
+        self.train_model()
+        self.save_model()
 
     def save_model(self):
         self.model.save_model("model/model", format="json")
