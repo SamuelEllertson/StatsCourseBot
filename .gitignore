@@ -2,6 +2,7 @@
 db.json
 db_dev.json
 catboost_info/
+saved_model.cbm
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

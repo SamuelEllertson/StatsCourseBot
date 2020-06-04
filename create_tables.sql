@@ -1,5 +1,5 @@
-drop table if exists Sections;
-drop table if exists Course;
+drop table if exists sections;
+drop table if exists course;
 
 create table course (
     id int primary key,
