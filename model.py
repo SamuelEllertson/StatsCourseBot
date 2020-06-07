@@ -119,7 +119,7 @@ class Model:
         query = query.replace("course", "class")
         tags = nltk.pos_tag(nltk.word_tokenize(query))
         stop_words = set(nltk.corpus.stopwords.words("english"))
-        topic_words = {"on", "about", "covering", "cover"}
+        topic_words = {"on", "about", "covering", "cover", "involve"}
         terms = {"summer", "spring", "fall", "winter"}
         teacher_titles = {
             "professor",
