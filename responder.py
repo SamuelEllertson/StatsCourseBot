@@ -259,7 +259,7 @@ class Responder():
         sections = self.datastore.get_sections_from_professor(params.professor, False)
 
         if len(sections) == 0:
-            return f"Sorry, {params.professor} is not teaching any courses this quarter."
+            return f"Sorry, {params.professor} is not teaching any courses next quarter."
 
         classes = set()
 

@@ -160,7 +160,7 @@ class Model:
                 while j < i:
                     # Only match to a course title if the phrase is very close
                     phrase = " ".join([t[0].capitalize() for t in tags[j : i + 1]])
-                    matches = get_close_matches(phrase, titles, n=1, cutoff=0.9)
+                    matches = get_close_matches(phrase, titles, n=1, cutoff=0.7)
                     if len(matches) > 0:
                         found_title = True
                         found_variable = True
