@@ -116,6 +116,7 @@ class Model:
         # Remove course prefixes and punctuation
         query = "".join([c for c in query if c not in string.punctuation])
         query = query.replace("STAT", "")
+        query = query.replace("course", "class")
         tags = nltk.pos_tag(nltk.word_tokenize(query))
         stop_words = set(nltk.corpus.stopwords.words("english"))
         topic_words = {"on", "about", "covering", "cover"}
