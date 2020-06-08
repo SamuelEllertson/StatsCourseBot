@@ -115,8 +115,7 @@ class Model:
             Returns the generalized form of the query and the list of variables."""
         # Remove course prefixes and punctuation
         query = "".join([c for c in query if c not in string.punctuation])
-        query = query.replace("STAT", "")
-        query = query.replace("course", "class")
+        query = query.replace("STAT", "").replace("course", "class").lower()
         tags = nltk.pos_tag(nltk.word_tokenize(query))
         stop_words = set(nltk.corpus.stopwords.words("english"))
         topic_words = {"on", "about", "covering", "cover", "involve"}
