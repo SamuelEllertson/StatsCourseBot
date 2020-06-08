@@ -29,7 +29,7 @@ class IOHandler():
         if self.args.use_irc:
             return self.ircbot.send_message(message)
 
-        print(f"{self.args.bot_name}: {message}")
+        print(f"{self.args.bot_name}: {message}\n")
 
     def ask_question(self, question: str) -> str:
         '''Prompts the user with question, returns their response'''
