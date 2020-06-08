@@ -25,7 +25,7 @@ class Model:
         self.datastore = datastore
         self.iohandler = iohandler
         self.tfidf = TfidfVectorizer(tokenizer=str.split)
-        self.model = CatBoostClassifier(silent=True)
+        self.model = CatBoostClassifier()
 
         self.train_tfidf()
 
@@ -44,9 +44,9 @@ class Model:
     def load_model(self):
         self.model.load_model("saved_model.cbm")
 
-    def train_model(self):
+    def train_model(self, test):
         """Creates and trains a CatBoost algorithm on the sample query data."""
-        labeled_data = get_training_data()
+        labeled_data = get_training_data(test)
 
         features = [self.get_features(query) for query in labeled_data.keys()]
         intents = [intent.name for intent in labeled_data.values()]
