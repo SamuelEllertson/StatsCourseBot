@@ -1,6 +1,6 @@
 from queryspec import Intent
 import random as r
-r.seed(18)
+r.seed(16)
 from operator import itemgetter
 
 def get_training_data(test):
@@ -15,11 +15,18 @@ def get_training_data(test):
     new_output = {}
     n = len(output) // 6            
     outputkeys = output.keys()
+    sampled_keys = r.sample(outputkeys, n)
     if test:
-        sampled_keys = r.sample(outputkeys, n)
+        for key in sampled_keys:
+            new_output[key] = output[key]
+        return new_output
     else:
-        sampled_keys = r.sample(outputkeys, len(outputkeys) - n)
-    for key in sampled_keys:
-        new_output[key] = output[key]	
+        for key in outputkeys:
+            if key not in sampled_keys:
+                new_output[key] = output[key]
+        return new_output
+        
+    # for key in sampled_keys:
+    #     new_output[key] = output[key]	
 
-    return new_output
+    
