@@ -1,6 +1,6 @@
 irc==18.0.0
 pymysql==0.9.3
-requests==2.23.0
+requests==2.31.0
 beautifulsoup4==4.9.1
 scikit-learn==0.23.1
 catboost==0.23.2
